@@ -1,5 +1,6 @@
 # Local folder
 sourcedata/
+data/
 
 # History files
 .Rhistory
