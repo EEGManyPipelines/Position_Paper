@@ -1,5 +1,5 @@
 ### IMPORT PARTICIPANT METADATA
-# Read the raw csv file. Recode variables. Save in R format.
+# Read the raw csv file. Re-code variables. Save in R format.
 #
 # Ref: Postion_paper
 #
@@ -7,15 +7,17 @@
 # Paths and file
 if ( Sys.getenv("USER") == 'mcvinding' ){
   proj.path <- '/Users/mcvinding/Documents/EEGManyPipelines/metadata_summary'
+} else if (Sys.getenv("USERNAME") == 'Mikkel'){
+  proj.path <- 'C:/Users/Mikkel/Documents/EEGManyPipelines/metadata_summary'
 }
 setwd(proj.path)
 
-data.path <- './sourcedata'
-out.path  <- './data'
-data.file <- 'demographic_cleaned.csv'
+data.path <- 'sourcedata'
+out.path  <- 'data'
+data.file <- 'demographic_cleaned_07092022.csv'
 
 # Read csv data
-data <- read.csv(file.path(data.path, data.file))
+data <- read.csv(file.path(proj.path, data.path, data.file))
 
 ###############################################################################
 # Order and re-code data
