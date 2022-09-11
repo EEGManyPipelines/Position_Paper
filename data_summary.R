@@ -7,6 +7,8 @@
 library(ggplot2)
 library(ggrepel)
 library(tidyverse)
+library(rworldmap)
+library(RColorBrewer)
 
 # Paths
 if ( Sys.getenv("USER") == 'mcvinding' ){
@@ -17,19 +19,27 @@ setwd(data.path)
 # Load data
 load('data.RData')
 
+
+# Paths and file for Yu-Fang
+rm(list=ls()) 
+path= dirname(rstudioapi::getActiveDocumentContext()$path)
+setwd(path)
+getwd()
+data <- read.csv("final_data.csv")
+
+
+
 ################################################################################
 # Teams
 length(unique(data$team))
 tabTeam <- data.frame(tabulate(data$team))
-tabTeam <- data.frame(table(tabulate(data$team)))
+table(tabulate(data$team))
 mean(tabulate(data$team))
 
-ggplot(tabTeam, aes(x=Var1, y=Freq))+
-  geom_col(fill="grey", colour="black")+
+ggplot(tabTeam, aes(x=tabulate.data.team.))+
+  geom_bar(fill="grey", colour="black")+
   ggtitle('Team size')+
-  labs(x="Number of Analysts", y='')+
-  geom_text(aes(label=Freq, vjust=-0.25))+
-  ylim(0,100)+
+  labs(x="Team size", y='')+
   theme_bw()
 ggsave("teamSize.jpg", width = 3, height = 3, dpi=600)
 
@@ -129,6 +139,55 @@ ggplot(df2, aes(x="", y=Freq, fill=Var1)) +
         panel.background = element_rect(fill = "white"))
 
 ggsave("fieldPie.jpg", width = 6, height = 6, dpi=600)
+
+
+
+################################################################################
+# Demographic map 
+
+data$country <- as.factor(data$country)
+data$gender <- as.factor(data$gender)
+
+df_frq<-data%>% group_by(country) %>%   
+  mutate(value=n()) %>% ungroup() %>% arrange(value) 
+
+df_frq$value <- as.numeric(df_frq$value )
+head(df_frq)
+
+# df_country is used only for mapping the demographic figure 
+df_country <-df_frq %>% select(country,value) #eeg_years,eeg_papers,gender,
+head(df_country)
+df_country <-unique(df_country) 
+
+# create a map 
+par(mai=c(0,0,0.2,0),xaxs="i",yaxs="i")
+# Joining the data to a map 
+df_country_map <- joinCountryData2Map(df_country, joinCode="ISO3", nameJoinColumn="Partner.ISO")
+# Remove Antarctica from the world map 
+df_country_new <- subset(df_country_map, continent != "Antarctica")
+
+# add color palette
+YYPalette <- RColorBrewer::brewer.pal(11,"PuOr")
+
+# def. map parameters
+mapParams <- mapCountryData(df_country_new, 
+                            nameColumnToPlot="value",  
+                            oceanCol = "azure2",
+                            catMethod = "categorical",
+                            missingCountryCol = gray(.8), #"white"
+                            addLegend = F, 
+                            # xlim=c(-10,19), ylim=c(40,56),
+                           # borderCol ="black"
+                           # mapTitle="Demography infographic of analysts", 
+                            colourPalette= YYPalette)
+
+# add legend and display map
+do.call(addMapLegendBoxes, c(mapParams,
+                             x = 'bottom',
+                             title = "No. of teams",
+                             horiz = TRUE,
+                             bg = "transparent",
+                             bty = "n"))
 
 
 
