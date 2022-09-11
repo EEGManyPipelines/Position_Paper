@@ -2,9 +2,9 @@
 # Read the raw csv file. Recode variables. Save in R format.
 #
 # Ref: Postion_paper
-#
+# Created by Mikkel C. Vinding & Yu-Fang Yang 
 
-# Paths and file
+# Paths and file for Mikkel
 if ( Sys.getenv("USER") == 'mcvinding' ){
   proj.path <- '/Users/mcvinding/Documents/EEGManyPipelines/metadata_summary'
 }
@@ -16,6 +16,15 @@ data.file <- 'demographic_cleaned.csv'
 
 # Read csv data
 data <- read.csv(file.path(data.path, data.file))
+
+# Paths and file for Yu-Fang
+rm(list=ls()) 
+path= dirname(rstudioapi::getActiveDocumentContext()$path)
+setwd(path)
+getwd()
+data <- read.csv("demographic_cleaned.csv")
+
+
 
 ###############################################################################
 # Order and re-code data
@@ -98,3 +107,6 @@ data$eeg_field_edit <- ifelse(data$eeg_field_edit %in% str_marking, "Marketing",
                  
 # Save data
 save(data, file=file.path(out.path, 'data.RData'))
+
+# Save data: Yu-Fang
+write.csv(data,'final_data.csv')

@@ -1,2 +1,3 @@
 # metadata_summary
-Summary of demographics, etc.
+
+The scripts for generating the figure for the paper. Such as, summary of demographics, etc.
