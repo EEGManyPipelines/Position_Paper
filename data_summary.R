@@ -11,7 +11,10 @@ library(tidyverse)
 # Paths
 if ( Sys.getenv("USER") == 'mcvinding' ){
   data.path <- '/Users/mcvinding/Documents/EEGManyPipelines/metadata_summary/data'
+} else if (Sys.getenv("USERNAME") == 'Mikkel'){
+  data.path <- 'C:/Users/Mikkel/Documents/EEGManyPipelines/metadata_summary/data'
 }
+
 setwd(data.path)
 
 # Load data
@@ -21,13 +24,15 @@ load('data.RData')
 # Teams
 length(unique(data$team))
 tabTeam <- data.frame(tabulate(data$team))
-table(tabulate(data$team))
+tabTeam <- data.frame(table(tabulate(data$team)))
 mean(tabulate(data$team))
 
-ggplot(tabTeam, aes(x=tabulate.data.team.))+
-  geom_bar(fill="grey", colour="black")+
+ggplot(tabTeam, aes(x=Var1, y=Freq))+
+  geom_col(fill="grey", colour="black")+
   ggtitle('Team size')+
-  labs(x="Team size", y='')+
+  labs(x="Number of Analysts", y='')+
+  geom_text(aes(label=Freq, vjust=-0.25))+
+  ylim(0,100)+
   theme_bw()
 ggsave("teamSize.jpg", width = 3, height = 3, dpi=600)
 
@@ -58,8 +63,8 @@ ggplot(data, aes(x=eeg_papers))+
 ggsave("EEGpapersAll.jpg", width = 6, height = 3, dpi=600)
 
 paperByTeam <- aggregate(data$eeg_papers, by=list(data$team), mean)
-range(paperByteam$x)
-median(paperByteam$x)
+range(paperByTeam$x)
+median(paperByTeam$x)
 mean(paperByTeam$x)
 sd(paperByTeam$x)
 
@@ -117,13 +122,12 @@ ggplot(df2, aes(x="", y=Freq, fill=Var1)) +
   #           position = position_stack(vjust = 0.5)) +
   coord_polar("y", start=0) +
   labs(x = NULL, y = NULL) +
-  geom_label_repel(aes(y = pos, label = paste0(Var1, " (",pct,"%)")),
-                   size = 4.5, nudge_x = 1, show.legend = FALSE) +
+  # geom_label_repel(aes(y = pos, label = paste0(Var1, " (",pct,"%)")), size = 4.5, nudge_x = 1, show.legend = FALSE) +
   theme_void() +
   theme(axis.ticks = element_blank(),
         axis.title = element_blank(),
         axis.text = element_blank(), 
-        legend.position = "none",
+        # legend.position = "none",
         panel.background = element_rect(fill = "white"))
 
 ggsave("fieldPie.jpg", width = 6, height = 6, dpi=600)

@@ -2,13 +2,20 @@
 # Read the raw csv file. Re-code variables. Save in R format.
 #
 # Ref: Postion_paper
-#
+# Created by Mikkel C. Vinding & Yu-Fang Yang 
 
-# Paths and file
+# Paths and file for Mikkel
 if ( Sys.getenv("USER") == 'mcvinding' ){
   proj.path <- '/Users/mcvinding/Documents/EEGManyPipelines/metadata_summary'
 } else if (Sys.getenv("USERNAME") == 'Mikkel'){
   proj.path <- 'C:/Users/Mikkel/Documents/EEGManyPipelines/metadata_summary'
+} else {
+  # Paths and file for Yu-Fang
+  rm(list=ls()) 
+  path= dirname(rstudioapi::getActiveDocumentContext()$path)
+  setwd(path)
+  getwd()
+  data <- read.csv("demographic_cleaned.csv")
 }
 setwd(proj.path)
 
@@ -51,7 +58,7 @@ str_neursci <- c("Auditory Neuroscience and Hearing","behavioural genetics, neur
   "Neuroscience, psychology, neuropsychology", "Neuroscience, psychophysiology", 
   "Neuroscience, Psychophysiology, Statistical Modelling","Neurosciences", "Neurosciences")
 str_neurolo <- c("neurology, neuroscience", "Neurophysiology", "neurophysiology","Electrophysiology")
-str_neruoim <- c()
+# str_neruoim <- c()
 str_comneur <- c("Computational Neuroscience","Computational neuroscience","computational neuroscience",
   "computational modelling")
 str_psychol <- c("Biological Psychology","biological Psychology","Cognitive psychology","cognitive psychology",
@@ -69,7 +76,7 @@ str_develop <- c("Developmental Psychology","Developmental Cognitive Neuroscienc
   "Developmental cognitive neuroscience", "developmental cognitive neuroscience","developmental cognitive science",
   "Human Development","Human development and family studies")
 str_biomedi <- c("Biomedical")
-str_elctphy <- c() 
+# str_elctphy <- c() 
 str_cognsci <- c("Cognitive Neuroscience","Cognitive neuroscience","cognitive neuroscience",
   "Cognitive Neuroscience ","Cognitive neuroscience ","cognitive neuroscience ","Cognitive neuroscience / cognitive psychology",
   "Cognitive Neuroscience / Psychology","cognitive neuroscience / psychology","cognitive neuroscience and neuropsychology",
@@ -100,3 +107,6 @@ data$eeg_field_edit <- ifelse(data$eeg_field_edit %in% str_marking, "Marketing",
                  
 # Save data
 save(data, file=file.path(out.path, 'data.RData'))
+
+# Save data: Yu-Fang
+write.csv(data,'final_data.csv')
