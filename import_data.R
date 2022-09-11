@@ -2,6 +2,7 @@
 # Read the raw csv file. Re-code variables. Save in R format.
 #
 # Ref: Postion_paper
+#
 # Created by Mikkel C. Vinding & Yu-Fang Yang 
 
 # Paths and file for Mikkel
@@ -15,7 +16,7 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
   path= dirname(rstudioapi::getActiveDocumentContext()$path)
   setwd(path)
   getwd()
-  data <- read.csv("demographic_cleaned.csv")
+  data <- read.csv("demographic_cleaned_07092022.csv.csv")
 }
 setwd(proj.path)
 
@@ -25,6 +26,13 @@ data.file <- 'demographic_cleaned_07092022.csv'
 
 # Read csv data
 data <- read.csv(file.path(proj.path, data.path, data.file))
+
+# # Paths and file for Yu-Fang
+# rm(list=ls()) 
+# path= dirname(rstudioapi::getActiveDocumentContext()$path)
+# setwd(path)
+# getwd()
+# data <- read.csv("demographic_cleaned_07092022.csv.csv")
 
 ###############################################################################
 # Order and re-code data

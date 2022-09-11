@@ -3,32 +3,48 @@
 #
 # Ref: Position_paper
 #
+# Created by Mikkel C. Vinding & Yu-Fang Yang 
 
 library(ggplot2)
 library(ggrepel)
 library(tidyverse)
+library(rworldmap)
+library(RColorBrewer)
 
 # Paths
 if ( Sys.getenv("USER") == 'mcvinding' ){
-  data.path <- '/Users/mcvinding/Documents/EEGManyPipelines/metadata_summary/data'
+  data.path <- '/Users/mcvinding/Documents/EEGManyPipelines/metadata_summary'
 } else if (Sys.getenv("USERNAME") == 'Mikkel'){
-  data.path <- 'C:/Users/Mikkel/Documents/EEGManyPipelines/metadata_summary/data'
+  data.path <- 'C:/Users/Mikkel/Documents/EEGManyPipelines/metadata_summary'
+} else {
+  # Paths and file for Yu-Fang
+  rm(list=ls()) 
+  path= dirname(rstudioapi::getActiveDocumentContext()$path)
+  setwd(path)
+  getwd()
+  data <- read.csv("final_data.csv")
 }
 
 setwd(data.path)
 
 # Load data
-load('data.RData')
+data <- read.csv("final_data.csv")
+
+# # Paths and file for Yu-Fang
+# rm(list=ls()) 
+# path= dirname(rstudioapi::getActiveDocumentContext()$path)
+# setwd(path)
+# getwd()
+# data <- read.csv("final_data.csv")
 
 ################################################################################
 # Teams
 length(unique(data$team))
-tabTeam <- data.frame(tabulate(data$team))
 tabTeam <- data.frame(table(tabulate(data$team)))
 mean(tabulate(data$team))
 
 ggplot(tabTeam, aes(x=Var1, y=Freq))+
-  geom_col(fill="grey", colour="black")+
+  geom_col(fill="grey", colour="black") +
   ggtitle('Team size')+
   labs(x="Number of Analysts", y='')+
   geom_text(aes(label=Freq, vjust=-0.25))+
@@ -115,22 +131,77 @@ df2 <- fieldData %>%
   mutate(csum = rev(cumsum(rev(Freq))), 
          pos = Freq/2 + lead(csum, 1),
          pos = if_else(is.na(pos), Freq/2, pos))
+df2$label = paste0(df2$Var1, " (",df2$pct,"%)")
 
 ggplot(df2, aes(x="", y=Freq, fill=Var1)) +
   geom_bar(stat="identity", width=1, color="black") +
-  # geom_text(aes(label = paste0(pct, "%")),
-  #           position = position_stack(vjust = 0.5)) +
+  # geom_text(aes(label = paste0(pct, "%")), position = position_stack(vjust = 0.5)) +
   coord_polar("y", start=0) +
   labs(x = NULL, y = NULL) +
+  scale_fill_discrete(name="Dicipline", labels=df2$label) +
+  # guides(fill=guide_legend(title="Field")) +
   # geom_label_repel(aes(y = pos, label = paste0(Var1, " (",pct,"%)")), size = 4.5, nudge_x = 1, show.legend = FALSE) +
   theme_void() +
   theme(axis.ticks = element_blank(),
         axis.title = element_blank(),
         axis.text = element_blank(), 
         # legend.position = "none",
-        panel.background = element_rect(fill = "white"))
+        panel.background = element_blank(),
+        legend.title = element_text(face="bold"),
+        panel.border = element_blank())
 
 ggsave("fieldPie.jpg", width = 6, height = 6, dpi=600)
+
+scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"), 
+                  name="Dicipline",
+                  labels=paste0(Var1, " (",pct,"%)"))
+
+################################################################################
+# Demographic map 
+
+data$country <- as.factor(data$country)
+data$gender <- as.factor(data$gender)
+
+df_frq<-data%>% group_by(country) %>%   
+  mutate(value=n()) %>% ungroup() %>% arrange(value) 
+
+df_frq$value <- as.numeric(df_frq$value )
+head(df_frq)
+
+# df_country is used only for mapping the demographic figure 
+df_country <-df_frq %>% select(country,value) #eeg_years,eeg_papers,gender,
+head(df_country)
+df_country <-unique(df_country) 
+
+# create a map 
+par(mai=c(0,0,0.2,0),xaxs="i",yaxs="i")
+# Joining the data to a map 
+df_country_map <- joinCountryData2Map(df_country, joinCode="ISO3", nameJoinColumn="Partner.ISO")
+# Remove Antarctica from the world map 
+df_country_new <- subset(df_country_map, continent != "Antarctica")
+
+# add color palette
+YYPalette <- RColorBrewer::brewer.pal(11,"PuOr")
+
+# def. map parameters
+mapParams <- mapCountryData(df_country_new, 
+                            nameColumnToPlot="value",  
+                            oceanCol = "azure2",
+                            catMethod = "categorical",
+                            missingCountryCol = gray(.8), #"white"
+                            addLegend = F, 
+                            # xlim=c(-10,19), ylim=c(40,56),
+                           # borderCol ="black"
+                           # mapTitle="Demography infographic of analysts", 
+                            colourPalette= YYPalette)
+
+# add legend and display map
+do.call(addMapLegendBoxes, c(mapParams,
+                             x = 'bottom',
+                             title = "No. of teams",
+                             horiz = TRUE,
+                             bg = "transparent",
+                             bty = "n"))
 
 
 

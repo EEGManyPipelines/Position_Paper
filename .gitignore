@@ -2,6 +2,10 @@
 sourcedata/
 data/
 
+# Specific filetypes
+*.jpg
+*.csv
+
 # History files
 .Rhistory
 .Rapp.history
