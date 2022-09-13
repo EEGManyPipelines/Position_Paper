@@ -145,16 +145,12 @@ ggplot(df2, aes(x="", y=Freq, fill=Var1)) +
   theme(axis.ticks = element_blank(),
         axis.title = element_blank(),
         axis.text = element_blank(), 
-        # legend.position = "none",
+        legend.position = "left",
         panel.background = element_blank(),
         legend.title = element_text(face="bold"),
         panel.border = element_blank())
 
-ggsave("fieldPie.jpg", width = 6, height = 6, dpi=600)
-
-scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"), 
-                  name="Dicipline",
-                  labels=paste0(Var1, " (",pct,"%)"))
+ggsave("fieldPie.jpg", width = 8, height = 6, dpi=600)
 
 ################################################################################
 # Demographic map 
@@ -203,6 +199,39 @@ do.call(addMapLegendBoxes, c(mapParams,
                              bg = "transparent",
                              bty = "n"))
 
+################################################################################
+# Career level
+table(data$job_position_edit)
 
 
+jobData <- data.frame(table(data$job_position_edit))
+jobData$pct  <- round(jobData$Freq / sum(jobData$Freq) * 100, 1)
+jobData <- jobData[order(-jobData$Freq),]
+# jobData$Var1 <- reorder(jobData$Var1, -jobData$Freq)
 
+df2 <- jobData %>% 
+  mutate(csum = rev(cumsum(rev(Freq))), 
+         pos = Freq/2 + lead(csum, 1),
+         pos = if_else(is.na(pos), Freq/2, pos))
+df2$label = paste0(df2$Var1, " (",df2$pct,"%)")
+
+ggplot(df2, aes(x="", y=Freq, fill=Var1)) +
+  geom_bar(stat="identity", width=1, color="black") +
+  # geom_text(aes(label = paste0(pct, "%")), position = position_stack(vjust = 0.5)) +
+  coord_polar("y", start=0) +
+  labs(x = NULL, y = NULL) +
+  scale_fill_discrete(name="Career level", labels=df2$label) +
+  # guides(fill=guide_legend(title="Field")) +
+  geom_label_repel(aes(y = pos, label = paste0(Var1, " (",pct,"%)")), size = 4.5, nudge_x = 1, show.legend = FALSE) +
+  theme_void() +
+  theme(axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        axis.text = element_blank(), 
+        legend.position = "none",
+        panel.background = element_blank(),
+        legend.title = element_text(face="bold"),
+        panel.border = element_blank())
+  # labs(title = 'Career stage', )
+ggsave("careerPie.jpg", width = 6, height = 6, dpi=600)
+
+################################################################################
