@@ -38,17 +38,94 @@ data <- read.csv(file.path(proj.path, data.path, data.file))
 # Order and re-code data
 data$team <- as.factor(data$team)
 
+################################################################################
 # Country
+################################################################################
 data$country <- ifelse(data$country=="United Arab Emirates", "UAE", data$country)
 data$country <- ifelse(data$country=="portugal", "Portugal", data$country)
 data$country <- ifelse(data$country=="The Netherlands", "Netherlands", data$country)
 data$country <- ifelse(data$country=="Korea", "Republic of Korea", data$country)
 data$country <- ifelse(data$country=="Catalonia", "Spain", data$country)
 
+################################################################################
 # Re-code job position
-# data$job_position # <- This one is tricky!
+################################################################################
+job_senior <- c("Academic / Professor", "Full professor", "Fulltime Professor", "Prof.",
+  "Professor", "professor", "Professor of Psychology", "Tenure Track Professor",
+  "Neuropsychology ", "Associate Professor", "Associate professor" , "department head",
+  "Work group leader", "Senior Lecturer (Associate Professor)","Faculty, Group Leader",
+  "head of research group", "Independent PI", "Lead Investigator ", "Leading researcher",
+  "PI", "Staff Neurologist - principal investigator", "Director", "Director of Neuroscience BU",
+  "Lab Director", "Lab leader", "Lab manager and researcher", "EEG Lab head","Coordinator Open Science",
+  "Group leader"
+)
+job_junior <- c("Assistant Profeesor","Assistant Profesor","Assistant Professor",
+  "Assistant professor", "assistant professor", "Assistant Professor ","assistant professor",
+  "Assistent Prof", "Asssitant professor", "research assistant professor", "Tenured Assistant Professor",
+  "Faculty member" , "Psychologist Researcher" , "Research Associate" , "Research associate",
+  "research associate / doctoral researcher", "Research Fellow", "Research Scientist",
+  "RESEARCHER", "Researcher", "researcher", "Senior Researcher", "Senior researcher",
+  "Senior researcher (glorified pot-doc)", "Senior Researcher at IU", "Tenured researcher",
+  "Junior Professor", "Neuroimaging Informatics Fellow", "assistant professor "
+)
+job_postdoc <- c("Max Planck - postdoc", "Post doc at Spaulding Rehabilitation Hospital/Harvard Medical School",
+  "Post Doctoral Research Fellow", "Post Doctoral researcher", "Post-Doc", "Post-doc",
+  "post-doc", "Post-Doc Researcher", "Post-doc researcher", "Post-doctoral fellow",
+  "post-doctoral fellow", "Post-doctoral Fellow ", "Post-doctoral Researcher", "Post-doctoral researcher",
+  "PostDoc", "Postdoc", "PostDoc position", "postdoc research fellow", "Postdoc Researcher",
+  "Postdoc researcher", "postdoc, junior researcher", "Postdoctoral Fellow","Postdoctoral fellow",
+  "Postdoctoral research associate", "Postdoctoral Research Fellow", "Postdoctoral research fellow",
+  "Postdoctoral research fellow " , "Postdoctoral Researcher","Postdoctoral researcher",
+  "postdoctoral researcher", "Postdoctoral researcher ", "Postdoctoral researchers",
+  "Postdoctoral reserach associate", "Postdoctoral Scholar", "Postoctoral scientist",
+  "pstdoc", "PhD graduate", "PostDoc ", "Associate research fellow"
+)
+job_phd <- c("Doctoral student", "Doctoral student/Research fellow", "Graduate assistant, PhD student ",
+  "graduate school student", "Graduate student", "Integrative Neuroscience PhD candidate and teaching assistant",
+  "junior research fellow, graduate phd student" ,"Ph.D candidate", "Ph.D. Student",
+  "Ph.d. student", "PhD Candidate", "PhD candidate", "PhD candidate ", "PhD Neuroscience Student",
+  "PhD Student", "PhD student", "Phd Student", "phd student", "phD student", "PhD student faculty of experimental psychology and faculty of neurology",
+  "PhD-student", "Project employee - PhD student", "Research assistant / PhD Student",
+  "Doctoral Researcher", "Ph.D.", "PhD", "PhD " , "Phd.", "PhD Position", "Phd ",
+  "PhD student "
+)
+job_lectur <- c("Akademischer Rat a. Z. ", "Junior Lecturer", "Lecturer", "Lecturer / Resercher",
+  "Lecturer at University of Granada", "Lecturer in Psychology", "Lecturer in Psychology / DECRA Fellow",
+  "Academic (Senior Lecturer)", "Senior Lecturer", "Senior lecturer", "Senior Lecturer in Imaging",
+  "Senior Lecturer in Psychology" ,"Senior Research Scientist"
+)
+job_student <- c("M.A student and teaching aid", "Master's Student", "Master's student",
+  "Student", "Student", "University undergraduate student ", "Predoctoral researcher ",
+  "Predoctoral researcher", "Scholarship Holder" , "Early Stage Research", "student"
+)
+job_ass <- c("Graduate Research Assistant", "Graduate research assistant","Post-Graduate Research assistant",
+  "RA", "Research Assistant" , "Research assistant", "research assistant", "Research Assistant ",
+  "Research Assistant - Neurophysiopathology Technician", "Teacher assistant", "Teaching Assistant",
+  "Lab Manager", "Research Engineer", "Research engineer", "Junior Researcher", "Junior researcher",
+  "Senior Human Sciences Technician ", "Senior Research Technician", "Technician at the Center of Neural Technologies and Machine Learning of Baltic Federal University",
+  "Project Scientist", "project scientist", "DATA ANALYST", "Data Scientist for Neurotechnology",
+  "Junior Research Fellow", "junior research assistant"
+)
+job_outside <- c("currently unemployed (since August 2021)", "Outside of academia",
+  "Casual Academics", "Medical Equipment Expert at Vice-Chancellor for Food & Drug",
+  "Proprietor"
+)
 
+data$job_position_edit <- data$job_position
+data$job_position_edit <- ifelse(data$job_position_edit %in% job_senior,  "Senior Professor",              data$job_position_edit)
+data$job_position_edit <- ifelse(data$job_position_edit %in% job_junior,  "Junior Professor/Researcher",   data$job_position_edit)
+data$job_position_edit <- ifelse(data$job_position_edit %in% job_postdoc, "Postdoc/Fellow/Scholar",        data$job_position_edit)
+data$job_position_edit <- ifelse(data$job_position_edit %in% job_phd,     "PhD student",                   data$job_position_edit)
+data$job_position_edit <- ifelse(data$job_position_edit %in% job_lectur,  "Lecturer/Instructor",           data$job_position_edit)
+data$job_position_edit <- ifelse(data$job_position_edit %in% job_student, "Pregraduate student",           data$job_position_edit)
+data$job_position_edit <- ifelse(data$job_position_edit %in% job_ass,     "Research Assistant/Technician", data$job_position_edit)
+data$job_position_edit <- ifelse(data$job_position_edit %in% job_outside, "Outside academia",              data$job_position_edit)
+
+
+
+################################################################################
 # Re-code academic field
+################################################################################
 str_apneuro <- c("Applied Neuroscience", "clinical neuroscience", "Clinical Psychological Science ")
 str_psychia <- c("psychiatric neurophysiology", "Psychiatry")
 str_enginee <- c("Audio Engineering", "Engineering ", "DSP", "Neuroengineering", "signal processing")
@@ -112,8 +189,9 @@ data$eeg_field_edit <- ifelse(data$eeg_field_edit %in% str_biomedi, "Biomedicine
 data$eeg_field_edit <- ifelse(data$eeg_field_edit %in% str_cognsci, "Cognitive Science",                     data$eeg_field_edit)
 data$eeg_field_edit <- ifelse(data$eeg_field_edit %in% str_marking, "Marketing",                             data$eeg_field_edit)
 
-                 
+################################################################################            
 # Save data
+################################################################################
 save(data, file=file.path(out.path, 'data.RData'))
 
 # Save data: Yu-Fang
