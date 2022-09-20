@@ -85,11 +85,14 @@ mean(paperByTeam$x)
 sd(paperByTeam$x)
 
 ggplot(paperByTeam, aes(x=x))+
-  geom_histogram(binwidth=2, fill="grey", colour="black")+
-  ggtitle('Averge peer-reviewed EEG papers per team')+
+  geom_histogram(binwidth=1, fill="blue", colour="black", alpha=.3)+
+  ggtitle('Averge number of EEG papers per team')+
   labs(x="N papers", y='')+
   scale_x_continuous(breaks=seq(0,60,10)) +
-  theme_bw()
+  theme_classic()+
+  theme(panel.grid = element_blank()
+    
+  )
 ggsave("EEGpapersTeam.jpg", width = 6, height = 3, dpi=600)
   
 ################################################################################
@@ -106,11 +109,14 @@ mean(teamExperience$x)
 sd(teamExperience$x)
 
 ggplot(teamExperience, aes(x=x))+
-  geom_histogram(binwidth=2, fill="grey", colour="black")+
-  ggtitle('Total number of years working with EEG per team')+
-  labs(x="Sum/Years", y='')+
+  geom_histogram(binwidth=1, fill="cyan", colour="black", alpha=.3)+
+  ggtitle('Sum of EEG experience per team')+
+  labs(x="Years", y='')+
   scale_x_continuous(breaks=seq(0,60,10)) +
-  theme_bw()
+  theme_classic()+
+  theme(axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.line.y = element_blank())
 ggsave("EEGyearsTeam.jpg", width = 6, height = 3, dpi=600)
 
 ################################################################################
