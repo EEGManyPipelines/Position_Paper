@@ -43,11 +43,11 @@ data$team <- as.factor(data$team)
 ################################################################################
 # Country
 ################################################################################
-data$country <- ifelse(data$country=="United Arab Emirates", "UAE", data$country)
-data$country <- ifelse(data$country=="portugal", "Portugal", data$country)
-data$country <- ifelse(data$country=="The Netherlands", "Netherlands", data$country)
-data$country <- ifelse(data$country=="Korea", "Republic of Korea", data$country)
-data$country <- ifelse(data$country=="Catalonia", "Spain", data$country)
+data$country <- ifelse(data$country=="United Arab Emirates", "UAE", as.character(data$country))
+data$country <- ifelse(data$country=="portugal", "Portugal", as.character(data$country))
+data$country <- ifelse(data$country=="The Netherlands", "Netherlands", as.character(data$country))
+data$country <- ifelse(data$country=="Korea", "Republic of Korea", as.character(data$country))
+data$country <- ifelse(data$country=="Catalonia", "Spain", as.character(data$country))
 
 ################################################################################
 # Re-code job position
