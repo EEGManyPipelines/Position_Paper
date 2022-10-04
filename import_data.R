@@ -48,6 +48,9 @@ data$country <- ifelse(data$country=="portugal", "Portugal", as.character(data$c
 data$country <- ifelse(data$country=="The Netherlands", "Netherlands", as.character(data$country))
 data$country <- ifelse(data$country=="Korea", "Republic of Korea", as.character(data$country))
 data$country <- ifelse(data$country=="Catalonia", "Spain", as.character(data$country))
+data$country <- ifelse(data$country=="South Korea", "Republic of Korea", as.character(data$country))
+
+data$country <- as.factor(data$country)
 
 ################################################################################
 # Re-code highest degree
@@ -91,6 +94,80 @@ data$highest_degree_edit <- ifelse(data$highest_degree_edit %in% mastersDeg,  'M
 data$highest_degree_edit <- ifelse(data$highest_degree_edit %in% PhD,  'PhD', as.character(data$highest_degree_edit))
 data$highest_degree_edit <- ifelse(data$highest_degree_edit %in% habil,  'Habil', as.character(data$highest_degree_edit))
 data$highest_degree_edit <- ifelse(data$highest_degree_edit %in% other,  'Other', as.character(data$highest_degree_edit))
+
+data$highest_degree_edit <- as.factor(data$highest_degree_edit)
+
+################################################################################
+# Re-code job positions taking into account highest degree obtained
+################################################################################
+data$job_position_basedOnDeg <- as.character(data$job_position)
+
+#Analysts with a bachelors's deg
+job_phdStudent_deg <- c('Graduate student', 'Graduate assistant, PhD student ', 'PhD Student', 
+                        'Research assistant / PhD Student', 'PhD Neuroscience Student', 'graduate school student')
+job_student_deg <- c('student', 'Student', 'Master\'s Student', 'M.A student and teaching aid', 
+                     'Master\'s student')
+job_ass_deg <- c('Research Assistant - Neurophysiopathology Technician', 'Research Assistant', 
+                 'Technician at the Center of Neural Technologies and Machine Learning of Baltic Federal University', 
+                 'junior research assistant', 'Lab Manager', 'Research assistant')
+job_other_deg <- c('Researcher')
+
+data$job_position_basedOnDeg[data$highest_degree_edit=='Bachelors'] <- 
+  ifelse(data$job_position_basedOnDeg[data$highest_degree_edit=='Bachelors'] %in% c(job_phdStudent_deg, job_student_deg, job_ass_deg, job_other_deg),  
+         c('PhD student', 'Pre-doctoral student', 'Research assistants', 'Researcher without PhD'), as.character(data$job_position_basedOnDeg[data$highest_degree_edit=='Bachelors']))
+
+#Analysts with a master's deg
+job_postdoc_deg <- c('Postdoctoral researchers')
+job_phdStudent_deg <- c('PhD student', 'phd student', 'PhD Candidate', 'Phd Student', 'Ph.D candidate', 
+                        'PhD candidate', 'PhD-student', 'PhD', 'Ph.D. Student', 'PhD ', 'Graduate student', 'Phd ', 'PhD candidate ', 
+                        'Doctoral Researcher', 'Doctoral student', 'PhD student ', 
+                        'PhD student faculty of experimental psychology and faculty of neurology', 
+                        'Integrative Neuroscience PhD candidate and teaching assistant', 'Graduate Research Assistant',
+                        'Graduate research assistant', 'Doctoral student/Research fellow', 'PhD Position', 'research associate / doctoral researcher',
+                        'Ph.D.', 'Ph.d. student', 'junior research fellow, graduate phd student', 'PhD Student', 
+                        'Project employee - PhD student', 'PhD student', 'Scholarship Holder', 'Predoctoral researcher', 
+                        'Predoctoral researcher ')
+job_ass_deg <- c('Research Assistant', 'Post-Graduate Research assistant', 'Teacher assistant')
+job_other_deg <- c('Leading researcher', 'Researcher', 'Junior Research Fellow', 'Postdoctoral researcher', 'researcher', 
+                   'Research Fellow', 'Early Stage Research', 'Research Engineer', 'Junior researcher')
+
+job_outside_deg <- c('Outside of academia', 'Medical Equipment Expert at Vice-Chancellor for Food & Drug', 'DATA ANALYST')
+
+data$job_position_basedOnDeg[data$highest_degree_edit=='Masters'] <- 
+  ifelse(data$job_position_basedOnDeg[data$highest_degree_edit=='Masters'] %in% c(job_postdoc_deg, job_phdStudent_deg, job_ass_deg, job_other_deg, job_outside_deg),  
+         c('Postdoc', 'PhD student', 'Research assistants', 'Researcher with Masters', 'Outside academia'), as.character(data$job_position_basedOnDeg[data$highest_degree_edit=='Masters']))
+
+#Analysts with a PhD
+job_faculty_deg <- c('Professor', 'Associate Profeesor', 'Assostant Profeesor', 'assistant professor', 'Professor of Psychology', 
+                     'Director of Neuroscience BU', 'Lab leader', 'Faculty, Group Leader', 'Academic (Senior Lecturer)', 
+                     'assistant professor', 'Full professor', 'Associate professor', 'Assistant Professor ', 
+                     'Director', 'Asssitant professor', 'Lab Director', 'EEG Lab head', 'Tenure Track Professor', 
+                     'Lecturer in Psychology', 'Senior Lecturer', 'Assistant Profesor', 'Academic / Professor',
+                     'Senior Lecturer in Imaging', 'Lecturer', 'Senior Lecturer (Associate Professor)',
+                     'Assistant professor', 'Senior lecturer', 'head of research group', 'department head', 
+                     'Junior Professor', 'Senior Lecturer in Psychology', 'Lecturer at University of Granada', 
+                     'research assistant professor', 'Faculty member', 'Associate Professor', 'assistant professor ', 
+                     'Tenured Assistant Professor', 'Assistant Profeesor', 'Assistant Professor', 'Prof.', 
+                     'Assistent Prof')
+job_postdoc_deg <- c('Postdoc', 'Postdoctoral research fellow', 'Post Doctoral researcher',
+                     'Postdoctoral research fellow', 'Post-Doc Researcher', 'Senior researcher (glorified pot-doc)',
+                     'post-doc', 'postdoc, junior researcher', 'PostDoc', 'Postdoctoral fellow', 'Post-doctoral Fellow ', 
+                     'Post Doctoral Research Fellow', 'Post doc at Spaulding Rehabilitation Hospital/Harvard Medical School', 
+                     'Postdoctoral Scholar', 'Postdoctoral Researcher', 'Postdoctoral Research Fellow', 
+                     'Postdoc Researcher', 'Post-doctoral fellow', 'Post-doctoral Researcher', 'Post-doc', 
+                     'Post-doctoral researcher', 'Post-Doc', 'Post-doc researcher', 'Postdoctoral researcher', 
+                     'Postdoc researcher', 'Postdoctoral research associate', 'post-doctoral fellow', 'postdoc research fellow', 
+                     'Max Planck - postdoc', 'postdoctoral researcher', 'Postdoctoral researcher ', 
+                     'Postdoctoral research associate', 'Postdoctoral Fellow', 'Postoctoral scientist', 'PostDoc position', 
+                     'pstdoc', 'Postdoctoral reserach associate', 'Lecturer in Psychology / DECRA Fellow', 'Postdoctoral research fellow ')
+
+data$job_position_basedOnDeg[data$highest_degree_edit=='PhD'] <- 
+  ifelse(data$job_position_basedOnDeg[data$highest_degree_edit=='PhD'] %in% c(job_faculty_deg, job_postdoc_deg),  
+         c('Group leader and faculty', 'Postdoc'), as.character(data$job_position_basedOnDeg[data$highest_degree_edit=='PhD']))
+
+
+
+unique(data$job_position_basedOnDeg[data$highest_degree_edit=='PhD'])
 ################################################################################
 # Re-code job position
 ################################################################################
@@ -239,4 +316,4 @@ data$eeg_field_edit <- ifelse(data$eeg_field_edit %in% str_marking, "Marketing",
 save(data, file=file.path(out.path, 'data.RData'))
 
 # Save data: Yu-Fang
-write.csv(data,'final_data.csv')
+write.csv(data,'final_data_tmp.csv')
