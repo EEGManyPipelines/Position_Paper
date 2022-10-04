@@ -12,6 +12,8 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
   proj.path <- 'C:/Users/Mikkel/Documents/EEGManyPipelines/metadata_summary'
 } else if (Sys.getenv("USER") == 'darinka'){
   proj.path <- '/home/darinka/Documents/EEGManyPipes/metadata_summary'
+} else if (Sys.getenv("USERNAME") == 'darinka.truebutschek'){
+  proj.path <- 'C:/Users/darinka.truebutschek/Documents/EEGManyPipelines/metadata_summary'
 } else {
   # Paths and file for Yu-Fang
   rm(list=ls()) 
