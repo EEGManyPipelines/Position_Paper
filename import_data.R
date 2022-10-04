@@ -50,6 +50,48 @@ data$country <- ifelse(data$country=="Korea", "Republic of Korea", as.character(
 data$country <- ifelse(data$country=="Catalonia", "Spain", as.character(data$country))
 
 ################################################################################
+# Re-code highest degree
+################################################################################
+data$highest_degree_edit <- data$highest_degree
+
+bachelorsDeg <- c('Bachelor', 'Bachelor \'s in Optometry', 'Bachelor\'s degree', 'Undergraduate Degree (B.Sc)', 
+                  'Under degree', 'Bachelors', 'BSocSc', 'Bachelor of Health Science (Honours) (AQF Level 8)',
+                  'Bachelor\'s degree in Clinical Neurophysiology', 'BA', 'bachelor', 'BEng', 'Bachelor of Science', 
+                  'Bachelor of Arts (Psychology Major) ', 'B.A', 'B.Sc.', 'Bachelor of Engineering in Biomedical engineering and Electrical engineering', 
+                  'BSc Neuroscience with Honours', 'undergraduate', 'Undergraduate', 'Bachelor\'s in Optometry ')
+
+mastersDeg <- c('Master degree', 'Diploma (Master-equivalent', 'Master', 'MA', 'MSc in Biology', 
+             'Master of Science', 'Masters', 'Master', 'Master degree', 'MSc', 'Master\'s in Psychology', 
+             'Master of Science in Cognitive Neuroscience', 'master', 'Master student', 'Master in Neurosciences',
+             'MsC', 'Msc', 'Master degree in psychology', 'Master in PSYCHOLOGY', 'MSC', 'MRes Neurotechnology', 
+             'Master of Science', 'Master of Engineering', 'Masters in Technology in AI', 'MSc commputer system engineering', 
+             'Master in Engineering', 'Master of Science in Engineering Sciences', 'Master of Education', 'Master of education', 
+             'M.S.', 'Master\'s', 'Master of Science in Neuroscience', 'Diplom Psycholgie (Psychology, M.Sc. equivalent)', 
+             'Master of Science (Psychology)', 'M.Sc.', 'master of science', 'MSc in Neurocience', 'Master Degree', 'Master degree', 
+             'Master of Science (M.Sc.)', 'Master of Science in Biomedical Engineering', 'Master after Bachelor', 'Master in Psychology', 
+             'M.sc.', 'Master\'s degree', 'Master of Psychology', 'Master of Arts in Cognitive Neuroscience', 'Master of science', 'MSc.', 
+             'M.A. (Psychology)', 'Master in Cognitive Science', 'master\'s degree', 'MSc Cognitive Neuroscience and Clinical Neuropsychology',
+             'MSc in Pschology', 'Diplom (equivalent to M. Sc.) in Psychology', 'M.Phil', 'M.Sc.', 'Master of Medicine', 'Master of Science in Cognitive Science',
+             'PhD (not defended yet but manuscript accepted by reading committee)', 'Diploma (Master-equivalent)', 
+             'MSc computer system engineering', 'Master of education', 'MSc in Neuroscience', 'Master in Science', 'Research Master', 
+             'M.Sc.', 'MSc in Psychology', 'Master\'s degree', 'master degree', 'Master', 'Master of education', 'M.Sc. ', 
+             'Master´s degree', 'Master ', 'Master of education ', 'Postgraduate')
+
+PhD <- c('Dr', 'PhD', 'Ph.D.', 'Dr. rer. nat.', 'PhD Heatlh Science', 'PhD ', 'PhD in Automation, Robotics and Bioengineering ', 
+         'PhD in Psychology', ' Doctoral degree', 'phd', 'PHD', 'PhD in biomedical sciences', 'Doctorate (PhD)', 'Dr. ', 
+         'Ph. D.', 'Ph.d', 'MD, PhD', 'Doctorate', 'PhD in Information and Communication Technologies', 'Ph.D', 'PD', 'Phd', 
+         'Doctor', 'PhD of engineering', 'P.h.D.', 'PhD Health Science', 'Dr. rer.nat.', 'Dr. rer. nat', 'PhD of engineering ')
+
+habil <- c('Prof. ', 'PhD with Habilitation', 'German habilitation', 'habilitation', 'Habilitation', 'Prof. Dr.')
+
+other <- c('Specialist Degree', 'high school diploma ')
+
+data$highest_degree_edit <- ifelse(data$highest_degree_edit %in% bachelorsDeg,  'Bachelors', as.character(data$highest_degree_edit))
+data$highest_degree_edit <- ifelse(data$highest_degree_edit %in% mastersDeg,  'Masters', as.character(data$highest_degree_edit))
+data$highest_degree_edit <- ifelse(data$highest_degree_edit %in% PhD,  'PhD', as.character(data$highest_degree_edit))
+data$highest_degree_edit <- ifelse(data$highest_degree_edit %in% habil,  'Habil', as.character(data$highest_degree_edit))
+data$highest_degree_edit <- ifelse(data$highest_degree_edit %in% other,  'Other', as.character(data$highest_degree_edit))
+################################################################################
 # Re-code job position
 ################################################################################
 job_senior <- c("Academic / Professor", "Full professor", "Fulltime Professor", "Prof.",
