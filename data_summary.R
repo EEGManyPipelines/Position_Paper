@@ -123,10 +123,83 @@ ggsave("EEGyearsTeam.jpg", width = 6, height = 3, dpi=600)
 
 ################################################################################
 # Country
-length(unique(data$country))
-table(data$country)
 
-# The map figure...
+data$country <- as.factor(data$country)
+data$gender <- as.factor(data$gender)
+
+df_frq<-data%>% 
+  select(country) %>% 
+  mutate(updated_country= 
+                         case_when( country=="Korea" | country=="Republic of Korea" ~"South Korea",
+                                    country=="HK"~"China",
+                                    country=="Catalonia"~"Spain",
+                                    country=="UAE"~"United Arab Emirates",
+                                    country=="portugal"~"Portugal",
+                                    TRUE ~ as.character(country))) %>% 
+  group_by(updated_country) %>%   
+  mutate(value1=n())  %>% arrange(value1) %>% select(value1,updated_country)%>% ungroup()
+
+df_frq$value1 <- as.numeric(df_frq$value1 )
+head(df_frq)
+
+# df_country is used only for mapping the demographic figure 
+df_country1 <-unique(df_frq) # 38 teams
+
+df_country<-df_country1%>% mutate(value= 
+                                    case_when(  (value1 <5 ) ~ "1-4",
+                                                #value1==1 ~"1",
+                                                #value1==2 ~"2",
+                                                #value1==3 ~"3",
+                                                #value1==4 ~"4",
+                                                (value1 <11 & value1 >4) ~ "5-9",
+                                                (value1 <21 & value1 >9)~ "10-19",
+                                                (value1 <31 & value1 >19)~ "20-29",
+                                                (value1 <41 & value1 >29)~ "30-39",
+                                                value1==96 ~"96")) %>% 
+  select(value1,updated_country)
+
+# change col name
+colnames(df_country)<- c("value","country")
+df_country$country <- as.factor(df_country$country)
+
+# The map figure
+# Joining the data to a map 
+df_country_map <- joinCountryData2Map(df_country, joinCode="NAME", nameJoinColumn="country")
+# Remove Antarctica from the world map 
+df_country_new <- subset(df_country_map, continent != "Antarctica")
+
+# add color palette
+#  unique((df_country$value)) # 15 avleus
+YYPalette <- RColorBrewer::brewer.pal(9,"YlGnBu") #PuBuGn
+
+# create a map 
+
+par(mai=c(0,0,0.2,0),xaxs="i",yaxs="i")
+# def. map parameters
+mapParams <- mapCountryData(df_country_new, 
+                            nameColumnToPlot="value",  
+                            #oceanCol = "azure2",
+                            catMethod =  c(5,10,20,30,40,96), #"categorical",
+                            missingCountryCol = gray(.98), #"white"
+                            addLegend = F, 
+                            # xlim=c(-10,19), ylim=c(40,56),
+                            #borderCol ="black",
+                            #mapTitle="Demography infographic of analysts", 
+                            colourPalette= YYPalette)
+#colourPalette= "diverging")
+
+do.call( addMapLegend, c(mapParams, legendWidth=1, legendMar = 2))
+
+do.call(addMapLegendBoxes, c(mapParams,
+                             x = 'bottom',
+                             title = "No. of teams",
+                             horiz = T,
+                             bg = "transparent",
+                             bty = "n", 
+                             #legendLabels="all",
+                             legendWidth=0.5))
+
+#ggsave("map1.png", width = 6, height = 6, dpi=600)
 
 ################################################################################
 # Academic field
