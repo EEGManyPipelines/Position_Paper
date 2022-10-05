@@ -54,6 +54,25 @@ ggplot(tabTeam, aes(x=Var1, y=Freq))+
   theme_bw()
 ggsave("teamSize.jpg", width = 3, height = 3, dpi=600)
 
+
+################################################################################
+# FigureC - Teams x Academic level
+
+
+length(unique(data$team))
+tabTeam <- data.frame(table(tabulate(data$team)))
+mean(tabulate(data$team))
+
+ggplot(tabTeam, aes(x=Var1, y=Freq))+
+  geom_col(fill="grey", colour="black") +
+  ggtitle('Team size')+
+  labs(x="Number of Analysts", y='')+
+  geom_text(aes(label=Freq, vjust=-0.25))+
+  ylim(0,100)+
+  theme_bw()
+
+
+
 ################################################################################
 # Age
 range(data$age)
