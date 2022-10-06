@@ -7,7 +7,7 @@
 ################################################################################
 #Necessary imports 
 library(tidyverse)
-length(optimbase)
+library(optimbase)
 
 ################################################################################
 #Path definitions
@@ -17,6 +17,8 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
   data.path <- 'C:/Users/Mikkel/Documents/EEGManyPipelines/metadata_summary'
 } else if (Sys.getenv("USER") == 'darinka'){
   data.path <- '/home/darinka/Documents/EEGManyPipes/metadata_summary/data'
+} else if (Sys.getenv("USERNAME") == 'darinka.truebutschek'){
+  data.path <- 'C:/Users/darinka.truebutschek/Documents/EEGManyPipelines/metadata_summary/data'
 } else {
   # Paths and file for Yu-Fang
   rm(list=ls()) 
@@ -75,8 +77,11 @@ dat2plot<-merge(dat2plot,df_teamsize,by="teamSize")
 dat2plot$proportions<-dat2plot$counts/dat2plot$vector_teamSizes
 
 #Plot
-ggplot(dat2plot, aes(x=teamSize, fill=gender_recoded, y=proportions)) +
+theme_set(theme_bw())
+ggplot(dat2plot, aes(x=teamSize, fill=gender_recoded, y=counts)) +
   geom_bar(stat='identity')
+
+
 
 
 
