@@ -30,7 +30,7 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
 setwd(data.path)
 
 # Load data
-data <- read.csv("final_data.csv")
+data <- read.csv("demographic_cleaned_07092022.csv")#Here should load the lastest version
 
 # # Paths and file for Yu-Fang
 # rm(list=ls()) 
