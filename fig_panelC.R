@@ -109,7 +109,10 @@ g <- ggplot(dat2plot, aes(x=teamSize, fill=gender_recoded, y=counts)) +
   scale_x_discrete(limits=rev) +
   scale_fill_manual(values=my_colors, labels=c('diverse', 'women', 'men', 'unknown')) +
   #scale_alpha_manual(values=my_alphas) +
-  theme(aspect.ratio=.3)
+  theme(aspect.ratio=.3) + 
+  theme(plot.margin=margin(t=0),
+        axis.title.y=element_text(angle=0, vjust=1.2,
+                                  margin=margin(t=0, r=-75, b=0, l=0)))
 
 ggsave("Descriptives_PanelC.png", width = 6, height = 3, dpi=600)
 
