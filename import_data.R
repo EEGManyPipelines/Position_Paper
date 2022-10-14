@@ -20,7 +20,7 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
   path= dirname(rstudioapi::getActiveDocumentContext()$path)
   setwd(path)
   getwd()
-  data <- read.csv("demographic_cleaned_07092022.csv.csv")
+  data <- read.csv("demographic_cleaned_07092022.csv")
 }
 setwd(proj.path)
 
