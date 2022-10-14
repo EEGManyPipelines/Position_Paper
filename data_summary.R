@@ -24,13 +24,13 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
   path= dirname(rstudioapi::getActiveDocumentContext()$path)
   setwd(path)
   getwd()
-  data <- read.csv("demographic_cleaned_07092022.csv") #Here should load the lastest version
+  data <- read.csv("final_data.csv") #Here should load the lastest version
 }
 
 setwd(data.path)
 
 # Load data
-data <- read.csv("demographic_cleaned_07092022.csv")#Here should load the lastest version
+data <- read.csv("final_data.csv")#Here should load the lastest version
 
 # # Paths and file for Yu-Fang
 # rm(list=ls()) 
