@@ -97,16 +97,19 @@ g <- ggplot(dat2plot, aes(x=teamSize, fill=gender_recoded, y=counts)) +
             position = position_stack(vjust=0.5),
             family='sans', size=6, fontface='bold', color='white') +
   labs(x='Team size', y='Number of analysts', fill='Gender') +
-  theme(axis.title=element_text(size=18, color='dimgray'),
+  theme(axis.title=element_text(size=18, color='dimgray', face='bold'),
         axis.text=element_text(size=16, color='dimgray')) +
-  ylim(c(0, 261)) +
+  #ylim(c(0, 261)) +
   theme(legend.title=element_text(size=16, color='dimgray', face='bold'), 
         legend.position='top',
+        legend.justification='right',
+        legend.margin=margin(t=0),
         legend.text=element_text(size=16, color='dimgray')) +
   #Re-order contents of legend to appear in the same order as the bars
   guides(fill=guide_legend(reverse=TRUE, title.position='top', title.hjust=.5)) +
   coord_flip() +
-  scale_x_discrete(limits=rev) +
+  scale_x_discrete(limits=rev, expand=c(0,0)) + 
+  scale_y_continuous(limits=c(-1, 262), expand=c(0,0)) +                   
   scale_fill_manual(values=my_colors, labels=c('diverse', 'women', 'men', 'unknown')) +
   #scale_alpha_manual(values=my_alphas) +
   theme(aspect.ratio=.3) + 
@@ -114,7 +117,7 @@ g <- ggplot(dat2plot, aes(x=teamSize, fill=gender_recoded, y=counts)) +
         axis.title.y=element_text(angle=0, vjust=1.2,
                                   margin=margin(t=0, r=-75, b=0, l=0)))
 
-ggsave("Descriptives_PanelC.png", width = 6, height = 3, dpi=600)
+ggsave("Descriptives_PanelC.png", width = 6, height = 4, dpi=600)
 
 
 
