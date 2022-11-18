@@ -26,7 +26,7 @@ setwd(proj.path)
 
 data.path <- 'sourcedata'
 out.path  <- 'data'
-data.file <- 'demographic_cleaned_07092022.csv'
+data.file <- 'demographic_cleaned_07092022_teamID_combinedBeliefs_forPlottingOnly.csv'
 
 # Read csv data
 data <- read.csv(file.path(proj.path, data.path, data.file))
@@ -178,7 +178,7 @@ job_faculty_deg <- c('Professor', 'Associate Profeesor', 'Assostant Profeesor', 
                      'Junior Professor', 'Senior Lecturer in Psychology', 'Lecturer at University of Granada', 
                      'research assistant professor', 'Faculty member', 'Associate Professor', 'assistant professor ', 
                      'Tenured Assistant Professor', 'Assistant Profeesor', 'Assistant Professor', 'Prof.', 
-                     'Assistent Prof', 'Lecturer / Resercher', 'Staff Neurologist - principal investigator', 'Tenured researcher')
+                     'Assistent Prof', 'Lecturer / Resercher', 'Staff Neurologist - principal investigator', 'Tenured researcher', 'Group leader')
 job_postdoc_deg <- c('Postdoc', 'Postdoctoral research fellow', 'Post Doctoral researcher',
                      'Postdoctoral research fellow', 'Post-Doc Researcher', 'Senior researcher (glorified pot-doc)',
                      'post-doc', 'postdoc, junior researcher', 'PostDoc', 'Postdoctoral fellow', 'Post-doctoral Fellow ', 
@@ -190,7 +190,7 @@ job_postdoc_deg <- c('Postdoc', 'Postdoctoral research fellow', 'Post Doctoral r
                      'Max Planck - postdoc', 'postdoctoral researcher', 'Postdoctoral researcher ', 
                      'Postdoctoral research associate', 'Postdoctoral Fellow', 'Postoctoral scientist', 'PostDoc position', 
                      'pstdoc', 'Postdoctoral reserach associate', 'Lecturer in Psychology / DECRA Fellow', 'Postdoctoral research fellow ',
-                     'Associate research fellow', 'Research Fellow', 'Research Associate')
+                     'Associate research fellow', 'Research Fellow', 'Research Associate', 'PostDoc ')
 
 job_ass_deg <- c('Lab manager and researcher', 'Senior Research Technician', 'Akademischer Rat a. Z. ',
                  'Coordinator Open Science', 'RA', 'Senior Human Sciences Technician ', 'Teaching Assistant', 
