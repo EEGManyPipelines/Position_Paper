@@ -1,7 +1,7 @@
 #Purpose: Plot the world map for the EEGManyPipes sample
 #Project: EEGManyPipes
 #Paper: Position Paper
-#Author: D. Truebutschek, M. Vinding, & Y. Yang
+#Author: Y. Yang D. Truebutschek, & M. Vinding, 
 #Date: 17-10-2022
 
 ################################################################################
