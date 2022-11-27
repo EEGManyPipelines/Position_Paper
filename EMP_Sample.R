@@ -73,6 +73,9 @@ jobsXteam <- table(data$job_position_recoded, by=data$teamSize)
 
 #Then, extract # of eeg papers
 data$eeg_papers_recoded <- data$eeg_papers
+print(summary(data$eeg_papers_recoded))
+ggplot(data, aes(x=eeg_papers_recoded)) + geom_histogram(binwidth=1, color='black', fill='white') #get a first feel of the data
+
 data$eeg_papers_recoded[data$eeg_papers_recoded==0] <- 0
 data$eeg_papers_recoded[data$eeg_papers_recoded==1] <- 1
 data$eeg_papers_recoded[data$eeg_papers_recoded==2] <- 2
@@ -85,10 +88,28 @@ data$eeg_papers_recoded <- as.factor(data$eeg_papers_recoded)
 
 papersXteam <- table(data$eeg_papers_recoded, by=data$teamSize)
 
+#Last, extract average subjective EEG experience (from prior beliefs questionnaire)
+data$average_expertise_recoded <- data$average_expertise
+print(summary(data$average_expertise_recoded))
+ggplot(data, aes(x=average_expertise_recoded)) + geom_histogram(binwidth=5, color='black', fill='white') #get a first feel of the data
+
+data$average_expertise_recoded[data$average_expertise_recoded >=0 & data$average_expertise_recoded <=12.5] <- 101
+data$average_expertise_recoded[data$average_expertise_recoded >=12.5 & data$average_expertise_recoded <=25] <- 110
+data$average_expertise_recoded[data$average_expertise_recoded >=25 & data$average_expertise_recoded <=37.5] <- 120
+data$average_expertise_recoded[data$average_expertise_recoded >=37.5 & data$average_expertise_recoded <=50] <- 130
+data$average_expertise_recoded[data$average_expertise_recoded >=50 & data$average_expertise_recoded <=62.5] <- 140
+data$average_expertise_recoded[data$average_expertise_recoded >=62.5 & data$average_expertise_recoded <=75] <- 150
+data$average_expertise_recoded[data$average_expertise_recoded >=75 & data$average_expertise_recoded <=87.5] <- 160
+data$average_expertise_recoded[data$average_expertise_recoded >=87.5 & data$average_expertise_recoded <=100] <- 170
+data$average_expertise_recoded[is.na(data$average_expertise_recoded)] <- 180
+data$average_expertise_recoded <- as.factor(data$average_expertise_recoded)
+
+expertiseXteam <- table(data$average_expertise_recoded, by=data$teamSize)
+
 #Prepare data for plotting
 df_teamsize<-data.frame()
 df_teamsize[1:3,1]<-c(1,2,3)
-df_teamsize[1:3,2]<-c(31, 100, 261)
+df_teamsize[1:3,2]<-c(30, 94, 273)
 colnames(df_teamsize)<-c("teamSize","vector_teamSizes")
 
 dat2plot_jobs <- data %>% 
@@ -107,10 +128,18 @@ dat2plot_papers <- data %>%
 dat2plot_papers <- merge(dat2plot_papers, df_teamsize, by="teamSize")
 dat2plot_papers$proportions<-dat2plot_papers$counts/dat2plot_papers$vector_teamSizes
 
+dat2plot_expertise <- data %>% 
+  select(average_expertise_recoded, teamSize) %>%
+  group_by(teamSize, average_expertise_recoded) %>%
+  summarise(counts=n())
+
+dat2plot_expertise <- merge(dat2plot_expertise, df_teamsize, by="teamSize")
+dat2plot_expertise$proportions<-dat2plot_expertise$counts/dat2plot_expertise$vector_teamSizes
+
 ################################################################################
 #Merge all of the data into a single plot
-dat2plot <- bind_rows(dat2plot_papers, dat2plot_jobs)
-dat2plot_melt <- melt(dat2plot[,c('teamSize', 'counts', 'proportions', 'eeg_papers_recoded','job_position_recoded')],
+dat2plot <- bind_rows(dat2plot_expertise, dat2plot_papers, dat2plot_jobs)
+dat2plot_melt <- melt(dat2plot[,c('teamSize', 'counts', 'proportions', 'average_expertise_recoded', 'eeg_papers_recoded','job_position_recoded')],
                       id = c('teamSize', 'counts', 'proportions'))
 
 #Re-order factor levels
@@ -119,7 +148,8 @@ dat2plot_melt <- melt(dat2plot[,c('teamSize', 'counts', 'proportions', 'eeg_pape
                                                            #'Outside academia', 'Unclassified'))
 
 #Re-order factor levels
-dat2plot_melt$value <-factor(dat2plot_melt$value, levels=c('60', '31', '11', '6', '3', '2', '1', '0', 
+dat2plot_melt$value <-factor(dat2plot_melt$value, levels=c('180', '170', '160', '150', '140', '130', '120', '110', '101',
+                                                           '60', '31', '11', '6', '3', '2', '1', '0', 
                                                            'Unclassified', 'Outside academia', 'Independent group leader or above', 
                                                            'Postdoc', 'PhD student', 'Pre-PhD'))
 
@@ -132,25 +162,39 @@ dat2plot_melt$value <-factor(dat2plot_melt$value, levels=c('60', '31', '11', '6'
 #my_colors = c('#38598A', '#4C6A96', '#607AA1', '#748BAD', '#889BB9', '#9CACC5', '#AFBDD0','#C3CDDC', 
               #'#F39486', '#F49F92', '#F5A99E', '#F7B4AA', '#F8BFB6', '#F9CAC3')
 
-my_colors = c('#38598A', '#4C6A96', '#607AA1', '#748BAD', '#889BB9', '#9CACC5', '#AFBDD0','#C3CDDC', 
-              '#8C8281', '#F39486', '#F49F92', '#F5A99E', '#F7B4AA', '#F8BFB6')
+#my_colors = c('#38598A', '#4C6A96', '#607AA1', '#748BAD', '#889BB9', '#9CACC5', '#AFBDD0','#C3CDDC',
+              #'#8C8281', '#F39486', '#F49F92', '#F5A99E', '#F7B4AA', '#F8BFB6')
+
+my_colors = c('#8C8281', '#F39486', '#F49F92', '#F5A99E', '#F7B4AA', '#F8bFB6', '#F9CAC3', '#FAD4CF', '#FDEAE7',
+              '#D0708F', '#D57E9A', '#D98DA5', '#DE9BB1', '#E3A9BC', '#E8B8C7', '#ECC6D2', '#F1D4DD',
+              '#8C8281', '#665585', '#756691', '#85779D', '#9488AA', '#A399B6')
+
 
 g <- ggplot(remove_missing(dat2plot_melt, na.rm=FALSE), aes(x=variable, y=counts, fill=value)) +
   geom_bar(stat='identity', position='stack') +
   facet_wrap(~teamSize, strip.position='bottom') +
   #facet_grid(~teamSize, ) +
   
+  #Add percentage labels to the individual bars
+  #geom_text(aes(x=variable, y=counts, label=paste0(sprintf("%4.0f", round(proportions*100, digits=0)), '%'),
+                #group=value), vjust=0.5, hjust=0,
+            #position='stack',
+            #family='sans', size=3.5, fontface='bold', color='dimgray') +
+  
   #Adjust colors
-  scale_fill_manual(values=my_colors, labels=c('>60', '31-60', '11-30', '6-10', '3-5', '2', '1', '0', 
-                                               'Unknown', 'Outside academia', '>= Independent group leader', 
+  scale_fill_manual(values=my_colors, labels=c('Unknown/missing', '87.5-100%', '72.5-87.5%', '62.5-72.5%', '50-62.5%',
+                                               '37.5-50%', '25-37.5%', '12.5-25%', '0-12.5%',
+                                               '>60', '31-60', '11-30', '6-10', '3-5', '2', '1', '0', 
+                                               'Unknown/missing', 'Outside academia', '>= Independent group leader', 
                                                'Postdoc', 'PhD student', '< PhD student')) +
   
   #Adjust x-axis
   theme_classic() +
   theme(plot.title = element_text(hjust = 0.5), axis.text.x=element_blank(), 
-        axis.ticks.x=element_blank(), panel.spacing = unit(0.1, "lines"))+
-  geom_text(aes(x=1, y=-10, label='# EEG\npapers'), size=3.5, color='dimgray') +
-  geom_text(aes(x=2, y=-10, label='Current\nposition'), size=3.5, color='dimgray') +
+        axis.ticks.x=element_blank(), panel.spacing = unit(0.1, "lines")) +
+  geom_text(aes(x=1, y=-10, label='Subj.\nexpertise'), size=3, color='dimgray') +
+  geom_text(aes(x=2, y=-10, label='# EEG\npapers'), size=3, color='dimgray') +
+  geom_text(aes(x=3, y=-10, label='Current\nposition'), size=3, color='dimgray') +
   
   #Adjust facets
   theme(strip.background=element_rect(fill='darkgray', color='darkgray')) +
@@ -165,133 +209,166 @@ g <- ggplot(remove_missing(dat2plot_melt, na.rm=FALSE), aes(x=variable, y=counts
         axis.line = element_line(color='dimgray', size=1, linetype='solid'),
         axis.ticks = element_line(color='dimgray', size=1, linetype='solid')) +
   
-  #Adjust legend
-  theme(legend.title=element_text(size=12, color='dimgray', face='bold'), 
-        #legend.position=c(.825, .9),
-        legend.text=element_text(size=12, color='dimgray')) +
-  guides(fill=guide_legend(ncol=2))
+  #Adjust legend (not plotted together as size is unreadable otherwise).
+  #theme(legend.title=element_text(size=12, color='dimgray', face='bold'), 
+        ##legend.position=c(.825, .9),
+        #legend.text=element_text(size=12, color='dimgray')) +
+  #guides(fill=guide_legend(ncol=2))
   
-
-
-
+  theme(legend.position='none')
+  
+ggsave("EMP_Sample_Expertise.png", width=6, height=4, dpi=600)
 
 ################################################################################
-#Plot data - horizontal
-my_colors = c('#BABABA', '#B2182B')
+#Plot data - percentages: Subjective expertise
 
-g <- ggplot(remove_missing(dat2plot_melt, na.rm=FALSE), aes(x=variable, y=counts, fill=value)) +
-  geom_bar(stat='identity', position='stack') +
-  facet_grid(rows=vars(teamSize), as.table=TRUE) +
-  
-  #Switch orientation
-  coord_flip()
+#Recode data to have missing data come in first
+levels(dat2plot_expertise$average_expertise_recoded) <- c('101', '110', '120', '130', '140', '150', '160', '170', '90')
+dat2plot_expertise$average_expertise_recoded <-factor(dat2plot_expertise$average_expertise_recoded, 
+                                                      levels=c('90', '101', '110', '120', '130', '140', '150', '160', '170'))
 
+#Average subjective expertise
+g <- ggplot(dat2plot_expertise, aes(x=teamSize, y=average_expertise_recoded)) +
+  geom_raster(aes(fill=proportions)) +
+  
+  #Change color
+  scale_fill_gradient(limits=c(0, 0.3), breaks=c(0, 0.1, 0.2, 0.3), labels=c('0', '10', '20', '30'),
+                      low='#FDEAE7', high='#F39486') +
+  
+  #Add percentage labels to tiles
+  geom_text(aes(x=teamSize, y=average_expertise_recoded, label=paste0(sprintf("%4.0f", round(proportions*100, digits=0))),
+  group=value), vjust=0.5, hjust=0.65,
+  family='sans', size=8, fontface='bold', color='white') +
+  
+  #Change theme
+  theme_classic() +
 
+  #Change y-axis tick labels
+  scale_y_discrete(labels=c('Missing', '12.5', '25.0', '37.5', '50.0', '62.5', '75.0', '87.5', '100.0')) +
+  
+  labs(x='Team size', y=' ') + 
+  
+  #Change legend
+  guides(fill=guide_colorbar(title='Relative percentage', title.position='top',
+         title.vjust=0.1, title.hjust=0.5, direction='horizontal', nbin=1000)) +
+  
+  #Add title
+  ggtitle('Subjective EEG expertise') +
 
-
-
-g <- ggplot(data, aes(fill=fct_rev(fill), x=fct_rev(continents), y=count, widths=.8))  +
-  geom_bar(stat='identity', position=position_dodge(.8)) +
-  
-  #Switch orientation
-  coord_flip() +
-  
-  #Add percentage labels to the individual bars
-  geom_text(aes(x=fct_rev(continents), y=count, label=paste0(sprintf("%4.0f", round(count, digits=0)), '%'),
-                group=fct_rev(fill)), vjust=0.5, hjust=0.3,
-            position=position_dodge(.8),
-            family='sans', size=3.5, fontface='bold', color='dimgray') +
-  
-  #Adjust colors
-  scale_fill_manual(values=my_colors, labels=c('Pubmed authors', 'Analysts')) +
-  
-  #Adjust legend
-  theme(legend.title=element_text(size=12, color='dimgray', face='bold'), 
-        legend.position=c(.825, .9),
-        legend.text=element_text(size=12, color='dimgray')) +
-  guides(fill=guide_legend(reverse=TRUE)) +
-  
-  #Change axis labels
-  labs(x=' ', y='Percent', fill='Sample') +  
-  
-  #Change the aspect ratio of the plot 
-  theme(aspect.ratio=.3) + 
-  
-  #Remove unnecessary white space between axis and bars
-  scale_x_discrete(expand=c(0,0)) + 
-  scale_y_continuous(limits=c(0, 73), expand=c(0,0)) +
-  
   #Change axis looks
-  theme(axis.title=element_text(size=16, color='dimgray', face='bold'),
-        axis.text=element_text(size=16, color='dimgray'), 
-        axis.line = element_line(color='dimgray', size=1, linetype='solid'),
-        axis.ticks = element_line(color='dimgray', size=1, linetype='solid')) 
-#axis.line.x = element_line(color='white', size=1, linetype='solid'),
-#axis.ticks.x = element_line(color='white', size=1, linetype='solid')) +
-#theme(plot.margin=unit(c(0.1,0,0,0), "null"),
-#axis.title.y=element_text(angle=0, vjust=1.075, margin=margin(t=0, r=-55, b=0, l=0))) 
+  theme(axis.title=element_text(size=20, color='dimgray', face='bold'),
+      axis.text=element_text(size=20, color='dimgray'), 
+      axis.line = element_line(color='dimgray', size=1, linetype='solid'),
+      axis.ticks = element_line(color='dimgray', size=1, linetype='solid'),
+      plot.title = element_text(size=22, color='dimgray', face='bold', hjust=0.5),
+      legend.title=element_text(size=18, color='dimgray', face='bold'),
+      legend.text=element_text(size=18, color='dimgray'), 
+      legend.position=c(.54, -.225),
+      axis.text.y=element_blank(),
+      aspect.ratio=1) 
 
-
-ggsave("Representative sample_horizontal.png", width = 6, height = 4, dpi=600)
-
-
-
+ggsave("EMP_Sample_SubjExpertise.png", width=6, height=8, dpi=600)
+ggsave("EMP_Sample_SubjExpertise.svg", width=6, height=8, dpi=600)
 
 ################################################################################
-#Plot data - vertical
+#Plot data - percentages: Number EEG papers
 
-#my_colors = brewer.pal(n=8, name='RdBu')#[c(1,8)]
-my_colors = c('#B2182B', '#BABABA')
-my_alphas = c(1, 1, 1, 1)
-theme_set(theme_classic())
-
-g <- ggplot(data, aes(fill=fill, x=continents, y=count, widths=.8))  +
-  geom_bar(stat='identity', position=position_dodge(.8)) +
+#EEG paper
+g <- ggplot(dat2plot_papers, aes(x=teamSize, y=eeg_papers_recoded)) +
+  geom_raster(aes(fill=proportions)) +
   
-  #Add percentage labels to the individual bars
-  geom_text(aes(x=continents, y=count, label=paste0(sprintf("%4.0f", round(count, digits=0)), '%'),
-                group=fill), vjust=-0.5,
-            position=position_dodge(.8),
-            family='sans', size=3.5, fontface='bold', color='dimgray') +
+  #Change color
+  scale_fill_gradient(limits=c(0, 0.4), breaks=c(0, 0.1, 0.2, 0.3, 0.4), labels=c('0', '10', '20', '30', '40'),
+                      low='#F1D4DD', high='#D0708F') +
   
-  #Adjust colors
-  scale_fill_manual(values=my_colors, labels=c('Analysts', 'Pubmed authors')) +
+  #Add percentage labels to tiles
+  geom_text(aes(x=teamSize, y=eeg_papers_recoded, label=paste0(sprintf("%4.0f", round(proportions*100, digits=0))),
+                group=value), vjust=0.5, hjust=0.65,
+            family='sans', size=8, fontface='bold', color='white') +
   
-  #Adjust legend
-  theme(legend.title=element_text(size=12, color='dimgray', face='bold'), 
-        legend.position=c(.2,.8),
-        legend.text=element_text(size=12, color='dimgray')) +
+  #Change theme
+  theme_classic() +
   
-  #Change axis labels
-  labs(x=' ', y='Percent', fill='Sample') +  
-
-  #Change the aspect ratio of the plot 
-  theme(aspect.ratio=.7) + 
+  #Change y-axis tick labels
+  scale_y_discrete(labels=c('0', '1', '2', '3-5', '6-10', '11-30', '31-60', '>60')) +
   
-  #Remove unnecessary white space between axis and bars
-  scale_x_discrete(expand=c(0,0)) + 
-  scale_y_continuous(limits=c(0, 73), expand=c(0,0)) +
+  labs(x='Team size', y=' ') + 
+  
+  #Change legend
+  guides(fill=guide_colorbar(title='Relative percentage', title.position='top',
+                             title.vjust=0.1, title.hjust=0.5, direction='horizontal', nbin=1000)) +
+  
+  #Add title
+  ggtitle('Number of EEG papers') +
   
   #Change axis looks
-  theme(axis.title=element_text(size=16, color='dimgray', face='bold'),
-        axis.text=element_text(size=16, color='dimgray'), 
+  #Change axis looks
+  theme(axis.title=element_text(size=20, color='dimgray', face='bold'),
+        axis.text=element_text(size=20, color='dimgray'), 
         axis.line = element_line(color='dimgray', size=1, linetype='solid'),
-        axis.ticks = element_line(color='dimgray', size=1, linetype='solid')) +
-        #axis.line.x = element_line(color='white', size=1, linetype='solid'),
-        #axis.ticks.x = element_line(color='white', size=1, linetype='solid')) +
-  theme(plot.margin=unit(c(0.1,0,0,0), "null"),
-        axis.title.y=element_text(angle=0, vjust=1.075, margin=margin(t=0, r=-55, b=0, l=0))) 
+        axis.ticks = element_line(color='dimgray', size=1, linetype='solid'),
+        plot.title = element_text(size=22, color='dimgray', face='bold', hjust=0.5),
+        legend.title=element_text(size=18, color='dimgray', face='bold'),
+        legend.text=element_text(size=18, color='dimgray'), 
+        legend.position=c(.54, -.225),
+        axis.text.y=element_blank(),
+        aspect.ratio=1) 
 
+ggsave("EMP_Sample_EEGPapers.png", width=6, height=8, dpi=600)
+ggsave("EMP_Sample_EEGPapers.svg", width=6, height=8, dpi=600)
+
+################################################################################
+#Plot data - percentages: Job position
+
+#Job position
+g <- ggplot(dat2plot_jobs, aes(x=teamSize, y=job_position_recoded)) +
+  geom_raster(aes(fill=proportions)) +
   
-ggsave("Representative sample_vertical.png", width = 6, height = 4, dpi=600)
+  #Change order of labels in axis
+  scale_y_discrete(limits = c('Unclassified', 'Outside academia', 'Pre-PhD', 'PhD student', 
+                              'Postdoc', 'Independent group leader or above'), 
+                   labels = c('Unknown', 'Outside academia', '<PhD', 'PhD student', 
+                              'Postdoc', '>=Group leader')) +
+  
+  #Change color
+  scale_fill_gradient(limits=c(0, 0.5), breaks=c(0, 0.1, 0.2, 0.3, 0.4, 0.5), labels=c('0', '10', '20', '30', '40', '50'),
+                      low='#D1CCDA', high='#665585') +
+  
+  #Add percentage labels to tiles
+  geom_text(aes(x=teamSize, y=job_position_recoded, label=paste0(sprintf("%4.0f", round(proportions*100, digits=0))),
+                group=value), vjust=0.5, hjust=0.65,
+            family='sans', size=8, fontface='bold', color='white') +
+  
+  #Change theme
+  theme_classic() +
+  
+  #Change y-axis tick labels
+  #scale_y_discrete(labels=c('Unknown', 'Outside academia', '<PhD', 'PhD student', 'Postdoc', '>Group leader')) +
+  
+  labs(x='Team size', y=' ') + 
+  
+  #Change legend
+  guides(fill=guide_colorbar(title='Relative percentage', title.position='top',
+                             title.vjust=0.1, title.hjust=0.5, direction='horizontal', nbin=1000)) +
+  
+  #Add title
+  ggtitle('Academic seniority') +
+  
+  #Change axis looks
+  #Change axis looks
+  theme(axis.title=element_text(size=20, color='dimgray', face='bold'),
+        axis.text=element_text(size=20, color='dimgray'), 
+        axis.line = element_line(color='dimgray', size=1, linetype='solid'),
+        axis.ticks = element_line(color='dimgray', size=1, linetype='solid'),
+        plot.title = element_text(size=22, color='dimgray', face='bold', hjust=0.5),
+        legend.title=element_text(size=18, color='dimgray', face='bold'),
+        legend.text=element_text(size=18, color='dimgray'), 
+        legend.position=c(.54, -.225),
+        axis.text.y=element_blank(),
+        aspect.ratio=1) 
 
-
-
-
-
-
-
-
+ggsave("EMP_Sample_Academic seniority.png", width=6, height=8, dpi=600)
+ggsave("EMP_Sample_Academic seniority.svg", width=6, height=8, dpi=600)
 
 
 
