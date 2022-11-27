@@ -67,7 +67,7 @@ genderXteam <- table(data$gender_recoded, by=data$teamSize)
 #Prepare data for plotting
 df_teamsize<-data.frame()
 df_teamsize[1:3,1]<-c(1,2,3)
-df_teamsize[1:3,2]<-c(31, 100, 261)
+df_teamsize[1:3,2]<-c(30, 94, 273)
 colnames(df_teamsize)<-c("teamSize","vector_teamSizes")
 
 dat2plot <- data %>% 
@@ -117,7 +117,57 @@ g <- ggplot(dat2plot, aes(x=teamSize, fill=gender_recoded, y=counts)) +
         axis.title.y=element_text(angle=0, vjust=1.2,
                                   margin=margin(t=0, r=-75, b=0, l=0)))
 
-ggsave("Descriptives_PanelC.png", width = 6, height = 4, dpi=600)
+ggsave("Gender.png", width = 6, height = 4, dpi=600)
+
+################################################################################
+#Plot data - percentages: Gender
+
+#Job position
+g <- ggplot(dat2plot, aes(x=teamSize, y=gender_recoded)) +
+  geom_raster(aes(fill=proportions)) +
+  
+  #Change order of labels in axis
+  scale_y_discrete(limits = c('Unknown', 'diverse', 'female', 'male'), 
+                   labels = c('Unknown', 'Diverse', 'Women', 'Men')) +
+  
+  #Change color
+  scale_fill_gradient(limits=c(0, 0.7), breaks=c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7), labels=c('0', '10', '20', '30', '40', '50', '60', '70'),
+                      low='#C3CDDC', high='#38598A') +
+  
+  #Add percentage labels to tiles
+  geom_text(aes(x=teamSize, y=gender_recoded, label=paste0(sprintf("%4.0f", round(proportions*100, digits=0))),
+                group=value), vjust=0.5, hjust=0.65,
+            family='sans', size=8, fontface='bold', color='white') +
+  
+  #Change theme
+  theme_classic() +
+
+  labs(x='Team size', y=' ') + 
+  
+  #Change legend
+  guides(fill=guide_colorbar(title='Relative percentage', title.position='top',
+                             title.vjust=0.1, title.hjust=0.5, direction='horizontal', nbin=1000)) +
+  
+  #Add title
+  ggtitle('Analysts gender') +
+  
+  #Change axis looks
+  theme(axis.title=element_text(size=20, color='dimgray', face='bold'),
+        axis.text=element_text(size=20, color='dimgray'), 
+        axis.line = element_line(color='dimgray', size=1, linetype='solid'),
+        axis.ticks = element_line(color='dimgray', size=1, linetype='solid'),
+        plot.title = element_text(size=22, color='dimgray', face='bold', hjust=0.5),
+        legend.title=element_text(size=18, color='dimgray', face='bold'),
+        legend.text=element_text(size=18, color='dimgray'), 
+        legend.position=c(.54, -.225),
+        axis.text.y=element_blank(),
+        aspect.ratio=1) 
+
+ggsave("EMP_Sample_Gender.png", width=6, height=8, dpi=600)
+ggsave("EMP_Sample_Gender.svg", width=6, height=8, dpi=600)
+
+
+
 
 
 
