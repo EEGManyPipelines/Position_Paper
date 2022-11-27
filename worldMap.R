@@ -87,26 +87,22 @@ head(df_frq)
 #Grouping data
 df_country1 <-unique(df_frq) #37 countries
 df_country1 <- df_country1 %>%
-  mutate(value_log = log10(value1))
-
-#df_country <- df_country1%>% mutate(value= 
-                                    #case_when(  (value1 <5 ) ~ "1-4",
-                                                ##value1==1 ~"1",
-                                                ##value1==2 ~"2",
-                                                ##value1==3 ~"3",
-                                                ##value1==4 ~"4",
-                                                #(value1 <11 & value1 >4) ~ "5-9",
-                                                #(value1 <21 & value1 >9)~ "10-19",
-                                                #(value1 <31 & value1 >19)~ "20-29",
-                                                #(value1 <41 & value1 >29)~ "30-39",
-                                                #value1==96 ~"96")) %>% 
-                                                #select(value1,updated_country)
+  mutate(value =
+           case_when((value1==1) ~ '1',
+                     (value1==2) ~ '2',
+                     (value1==3) ~ '3',
+                     (value1 >=4 & value1 <=5) ~ '4',
+                     (value1 >=6 & value1 <=10) ~ '5',
+                     (value1 >=11 & value1 <=20) ~ '6',
+                     (value1 >=21 & value1 <=40) ~ '7',
+                     (value1 >40) ~ '8')) %>%
 
 df_country <- df_country1
 
 #Change col names
-colnames(df_country)<- c('value', 'country', 'value_log')
+colnames(df_country)<- c('value', 'country', 'value_recoded')
 df_country$country <- as.factor(df_country$country)
+df_country$value_recoded <- as.factor(df_country$value_recoded)
 
 ################################################################################
 #Plot
@@ -117,46 +113,24 @@ df_country_map <- joinCountryData2Map(df_country, joinCode="NAME", nameJoinColum
 #Remove Antarctica from the world map 
 df_country_new <- subset(df_country_map, continent != "Antarctica")
 
-# add color palette
-#  unique((df_country$value)) # 15 avleus
-#YYPalette <- RColorBrewer::brewer.pal(9,"YlGnBu") #PuBuGn
-
-YYPalette <- RColorBrewer::brewer.pal(17, 'Greens')
+#Create colormap
+YYPalette <- c('#D2E3E1', '#C3D9D7', '#B4D0CE', '#A5C7C4', '#96BDBA', '#87B4B0', '#78AAA6', '#69A19C')
 
 #Create a map 
-
-#par(mai=c(0,0,0.2,0),xaxs="i",yaxs="i")
-# def. map parameters
 mapParams <- mapCountryData(df_country_new, 
-                            nameColumnToPlot = "value",  
-                            #catMethod='logFixedWidth',
-                            #catMethod =  c(5,10,20,30,40,96), #"categorical",
-                            #catMethod =  c(1, 2, 3, 6, 13, 21, 32, 93), #"categorical",
-                            catMethod = c(1, 2, 3, 6, 13, 21, 32, 93),
-                            missingCountryCol = gray(.98), #"white"
+                            nameColumnToPlot = "value_recoded",  
+                            catMethod = 'categorical',
+                            missingCountryCol = 'darkgray',#gray(.98), #"white"
                             addLegend = F, 
                             lwd = .8,
-                            borderCol = 'black',
-                            colourPalette= YYPalette[2 : 8])
-#colourPalette= "diverging")
+                            borderCol = 'white',
+                            colourPalette= YYPalette)
 
-#do.call(addMapLegend, c(mapParams, legendWidth=1, legendMar = 2))
-do.call(addMapLegend, c(mapParams, legendLabels='all', 
-                        legendIntervals='page'))
-
-
-
-
-#do.call(addMapLegendBoxes, c(mapParams,
-                             #x = 'bottom',
-                            # title = "No. of teams",
-                             #horiz = T,
-                            # bg = "transparent",
-                            # bty = "n", 
-                            # #legendLabels="all",
-                            # legendWidth=0.5))
-
-ggsave("map1.png", width = 6, height = 6, dpi=600)
+do.call(addMapLegendBoxes, c(mapParams,
+                             x='bottom',
+                             horiz=T,
+                             bg='transparent', 
+                             bty='n'))
 
 
 
