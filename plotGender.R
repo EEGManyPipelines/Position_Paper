@@ -86,6 +86,91 @@ my_colors = brewer.pal(n=8, name='RdBu')[8:-1:5]
 my_alphas = c(1, 1, 1, 1)
 theme_set(theme_classic())
 
+################################################################################
+#Plot data - pie-chart: Gender
+
+#Teamsize 1
+teamSize1 <- dat2plot[dat2plot$teamSize == 1, ]
+teamSize1$gender_recoded <- factor(teamSize1$gender_recoded,
+                                      levels=c('male', 'female', 'Unknown'))
+
+g <- ggplot(teamSize1, aes(x='', y=proportions, fill=gender_recoded))+
+  geom_bar(width = 1, stat = "identity") 
+
+pie <- g + coord_polar("y", start=0) +
+   #Change colors
+  scale_fill_manual(values=c('#38598A', '#FFDDBD', '#797C81'), 
+                    labels=c('Men', 'Women', 'Unknown')) +
+  #Change theme
+  theme_void() + 
+  theme(axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        axis.text = element_blank(), 
+        legend.position = "left",
+        legend.title=element_text(size=18, color='dimgray', face='bold'),
+        legend.text=element_text(size=18, color='dimgray'), 
+        panel.border = element_blank(),
+        aspect.ratio=1)
+
+ggsave("EMP_Sample_Gender1.png", width=6, height=8, dpi=600)
+ggsave("EMP_Sample_Gender1.svg", width=6, height=8, dpi=600)
+
+#Teamsize 2
+teamSize2 <- dat2plot[dat2plot$teamSize == 2, ]
+teamSize2$gender_recoded <- factor(teamSize2$gender_recoded,
+                                   levels=c('male', 'female', 'Unknown'))
+
+g <- ggplot(teamSize2, aes(x='', y=proportions, fill=gender_recoded))+
+  geom_bar(width = 1, stat = "identity") 
+
+pie <- g + coord_polar("y", start=0) +
+  #Change colors
+  scale_fill_manual(values=c('#38598A', '#FFDDBD', '#797C81'), 
+                    labels=c('Men', 'Women', 'Unknown')) +
+  #Change theme
+  theme_void() + 
+  theme(axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        axis.text = element_blank(), 
+        legend.position = "left",
+        legend.title=element_text(size=18, color='dimgray', face='bold'),
+        legend.text=element_text(size=18, color='dimgray'), 
+        panel.border = element_blank(),
+        aspect.ratio=1)
+
+ggsave("EMP_Sample_Gender2.png", width=6, height=8, dpi=600)
+ggsave("EMP_Sample_Gender2.svg", width=6, height=8, dpi=600)
+
+#Teamsize 3
+teamSize3 <- dat2plot[dat2plot$teamSize == 3, ]
+teamSize3$gender_recoded <- factor(teamSize3$gender_recoded,
+                                   levels=c('male', 'female', 
+                                            'diverse', 'Unknown'))
+
+g <- ggplot(teamSize3, aes(x='', y=proportions, fill=gender_recoded))+
+  geom_bar(width = 1, stat = "identity") 
+
+pie <- g + coord_polar("y", start=0) +
+  #Change colors
+  scale_fill_manual(values=c('#38598A', '#FFDDBD', '#B4D0CE', '#797C81'), 
+                    labels=c('Men', 'Women', 'Diverse', 'Unknown')) +
+  #Change theme
+  theme_void() + 
+  theme(axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        axis.text = element_blank(), 
+        legend.position = "left",
+        legend.title=element_text(size=18, color='dimgray', face='bold'),
+        legend.text=element_text(size=18, color='dimgray'), 
+        panel.border = element_blank(),
+        aspect.ratio=1)
+
+ggsave("EMP_Sample_Gender3.png", width=6, height=8, dpi=600)
+ggsave("EMP_Sample_Gender3.svg", width=6, height=8, dpi=600)
+
+
+################################################################################
+#Plot data - bars: Gender
 g <- ggplot(dat2plot, aes(x=teamSize, fill=gender_recoded, y=counts)) +
   geom_bar(stat='identity') +
   #geom_text(aes(x=teamSize, y=counts, label=paste0(sprintf("%4.0f", round(proportions, digits=2)*100), '%'),
