@@ -12,6 +12,7 @@ library(ggrepel)
 library(tidyverse)
 library(rworldmap)
 library(RColorBrewer)
+library(countrycode)
 
 ################################################################################
 #Path definitions
@@ -132,5 +133,12 @@ do.call(addMapLegendBoxes, c(mapParams,
                              bg='transparent', 
                              bty='n'))
 
+################################################################################
+#Extract percentages of continents
+analyst_countries <- data$country
+emp_continent <- countrycode(sourcevar = analyst_countries, origin = "country.name", destination = "continent")
 
+n_analysts <- length(emp_continent)
+freqTable <- table(emp_continent) / n_analysts
+freqTable <- freqTable * 100
 
