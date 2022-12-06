@@ -1,3 +1,3 @@
-# metadata_summary
+# Purpose
 
-The scripts for generating the figure for the paper. Such as, summary of demographics, etc.
+The scripts for generating the figures in position paper - "EEGManyPipelines: A large-scale, grass-root multi-analyst study of EEG analysis practices in the wild"
