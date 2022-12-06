@@ -1,7 +1,7 @@
 #Purpose: Plot the EMP sample data 
 #Project: EEGManyPipes
 #Paper: Position Paper
-#Author: D. Truebutschek, M. Vinding, & Y. Yang
+#Author: D. Truebutschek, & Y. Yang
 #Date: 04-10-2022
 
 ################################################################################
