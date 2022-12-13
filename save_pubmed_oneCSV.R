@@ -1,11 +1,11 @@
 #Purpose: Compare representative data to the EEGManyPipes data
 #Project: EEGManyPipes
-#Paper: Position Paper
-#Author: D. Truebutschek, M. Vinding, & Y. Yang
+#Paper: Trübutschek, D. et al. EEGManyPipelines: A large-scale, grass-root multi-analyst study of EEG analysis practices in the wild. (2022). doi:10.31222/osf.io/jq342
+#Author: D. Truebutschek, M. C. Vinding, & Y. Yang
 #Date: 17-10-2022
 
 ################################################################################
-#Necessary imports 
+#Necessary imports
 library(tidyverse)
 library(optimbase)
 library(ggthemes)
@@ -24,7 +24,7 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
   data.path <- 'C:/Users/darinka.truebutschek/Documents/EEGManyPipelines/metadata_summary/data'
 } else {
   # Paths and file for Yu-Fang
-  rm(list=ls()) 
+  rm(list=ls())
   path= dirname(rstudioapi::getActiveDocumentContext()$path)
   setwd(path)
   getwd()
@@ -47,5 +47,3 @@ affiliations <- eeg_paps
 df <- data.frame(authors, titles, affiliations)
 
 write.csv(df, 'PubmedData.csv')
-
-

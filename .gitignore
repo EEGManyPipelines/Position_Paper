@@ -5,6 +5,7 @@ data/
 # Specific filetypes
 *.jpg
 *.csv
+*.png
 
 # History files
 .Rhistory

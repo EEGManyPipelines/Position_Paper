@@ -1,11 +1,11 @@
 #Purpose: Plot the gender distribution of the EEGManyPipes sample
 #Project: EEGManyPipes
-#Paper: Position Paper
-#Author:  Y. Yang, D. Truebutschek, & M. Vinding, 
+#Paper: Trübutschek, D. et al. EEGManyPipelines: A large-scale, grass-root multi-analyst study of EEG analysis practices in the wild. (2022). doi:10.31222/osf.io/jq342
+#Author:  Y. Yang, D. Truebutschek, & M. C. Vinding,
 #Date: 04-10-2022
 
 ################################################################################
-#Necessary imports 
+#Necessary imports
 library(tidyverse)
 library(optimbase)
 library(ggthemes)
@@ -24,7 +24,7 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
   data.path <- 'C:/Users/darinka.truebutschek/Documents/EEGManyPipelines/metadata_summary/data'
 } else {
   # Paths and file for Yu-Fang
-  rm(list=ls()) 
+  rm(list=ls())
   path= dirname(rstudioapi::getActiveDocumentContext()$path)
   setwd(path)
   getwd()
@@ -47,12 +47,12 @@ team_sizes <- ones(length(teams), 1)
 
 for (value in seq(n_teams)) {
   print(value)
-  
+
   teamSize <- sum(teams == value)
   team_sizes[teams == value] <- teamSize
 }
 
-data$teamSize <- team_sizes  
+data$teamSize <- team_sizes
 data$teamSize <- as.factor(data$teamSize)
 
 #Next, extract gender proportions
@@ -70,7 +70,7 @@ df_teamsize[1:3,1]<-c(1,2,3)
 df_teamsize[1:3,2]<-c(30, 94, 273)
 colnames(df_teamsize)<-c("teamSize","vector_teamSizes")
 
-dat2plot <- data %>% 
+dat2plot <- data %>%
   select(gender_recoded, teamSize) %>%
   group_by(teamSize, gender_recoded) %>%
   summarise(counts=n())
@@ -95,20 +95,20 @@ teamSize1$gender_recoded <- factor(teamSize1$gender_recoded,
                                       levels=c('male', 'female', 'Unknown'))
 
 g <- ggplot(teamSize1, aes(x='', y=proportions, fill=gender_recoded))+
-  geom_bar(width = 1, stat = "identity") 
+  geom_bar(width = 1, stat = "identity")
 
 pie <- g + coord_polar("y", start=0) +
    #Change colors
-  scale_fill_manual(values=c('#38598A', '#FFDDBD', '#797C81'), 
+  scale_fill_manual(values=c('#38598A', '#FFDDBD', '#797C81'),
                     labels=c('Men', 'Women', 'Unknown')) +
   #Change theme
-  theme_void() + 
+  theme_void() +
   theme(axis.ticks = element_blank(),
         axis.title = element_blank(),
-        axis.text = element_blank(), 
+        axis.text = element_blank(),
         legend.position = "left",
         legend.title=element_text(size=18, color='dimgray', face='bold'),
-        legend.text=element_text(size=18, color='dimgray'), 
+        legend.text=element_text(size=18, color='dimgray'),
         panel.border = element_blank(),
         aspect.ratio=1)
 
@@ -121,20 +121,20 @@ teamSize2$gender_recoded <- factor(teamSize2$gender_recoded,
                                    levels=c('male', 'female', 'Unknown'))
 
 g <- ggplot(teamSize2, aes(x='', y=proportions, fill=gender_recoded))+
-  geom_bar(width = 1, stat = "identity") 
+  geom_bar(width = 1, stat = "identity")
 
 pie <- g + coord_polar("y", start=0) +
   #Change colors
-  scale_fill_manual(values=c('#38598A', '#FFDDBD', '#797C81'), 
+  scale_fill_manual(values=c('#38598A', '#FFDDBD', '#797C81'),
                     labels=c('Men', 'Women', 'Unknown')) +
   #Change theme
-  theme_void() + 
+  theme_void() +
   theme(axis.ticks = element_blank(),
         axis.title = element_blank(),
-        axis.text = element_blank(), 
+        axis.text = element_blank(),
         legend.position = "left",
         legend.title=element_text(size=18, color='dimgray', face='bold'),
-        legend.text=element_text(size=18, color='dimgray'), 
+        legend.text=element_text(size=18, color='dimgray'),
         panel.border = element_blank(),
         aspect.ratio=1)
 
@@ -144,28 +144,26 @@ ggsave("EMP_Sample_Gender2.svg", width=6, height=8, dpi=600)
 #Teamsize 3
 teamSize3 <- dat2plot[dat2plot$teamSize == 3, ]
 teamSize3$gender_recoded <- factor(teamSize3$gender_recoded,
-                                   levels=c('male', 'female', 
+                                   levels=c('male', 'female',
                                             'diverse', 'Unknown'))
 
 g <- ggplot(teamSize3, aes(x='', y=proportions, fill=gender_recoded))+
-  geom_bar(width = 1, stat = "identity") 
+  geom_bar(width = 1, stat = "identity")
 
 pie <- g + coord_polar("y", start=0) +
   #Change colors
-  scale_fill_manual(values=c('#38598A', '#FFDDBD', '#B4D0CE', '#797C81'), 
+  scale_fill_manual(values=c('#38598A', '#FFDDBD', '#B4D0CE', '#797C81'),
                     labels=c('Men', 'Women', 'Diverse', 'Unknown')) +
   #Change theme
-  theme_void() + 
+  theme_void() +
   theme(axis.ticks = element_blank(),
         axis.title = element_blank(),
-        axis.text = element_blank(), 
+        axis.text = element_blank(),
         legend.position = "left",
         legend.title=element_text(size=18, color='dimgray', face='bold'),
-        legend.text=element_text(size=18, color='dimgray'), 
+        legend.text=element_text(size=18, color='dimgray'),
         panel.border = element_blank(),
         aspect.ratio=1)
 
 ggsave("EMP_Sample_Gender3.png", width=6, height=8, dpi=600)
 ggsave("EMP_Sample_Gender3.svg", width=6, height=8, dpi=600)
-
-

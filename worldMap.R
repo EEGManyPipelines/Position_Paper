@@ -1,11 +1,11 @@
 #Purpose: Plot the world map for the EEGManyPipes sample
 #Project: EEGManyPipes
-#Paper: Position Paper
-#Author: Y. Yang D. Truebutschek, & M. Vinding, 
+#Paper: Trübutschek, D. et al. EEGManyPipelines: A large-scale, grass-root multi-analyst study of EEG analysis practices in the wild. (2022). doi:10.31222/osf.io/jq342
+#Author: Y. Yang D. Truebutschek, & M. C. Vinding,
 #Date: 17-10-2022
 
 ################################################################################
-#Necessary imports 
+#Necessary imports
 
 library(ggplot2)
 library(ggrepel)
@@ -26,7 +26,7 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
   data.path <- 'C:/Users/darinka.truebutschek/Documents/EEGManyPipelines/metadata_summary/data'
 } else {
   # Paths and file for Yu-Fang
-  rm(list=ls()) 
+  rm(list=ls())
   path= dirname(rstudioapi::getActiveDocumentContext()$path)
   setwd(path)
   getwd()
@@ -48,11 +48,11 @@ dat2analyze <- data %>%
   arrange(team) %>%
   group_by(team) %>%
   mutate(teamSize=n()) %>%
-  ungroup() 
+  ungroup()
 
-dat2analyze$teamSize <- as.integer(dat2analyze$teamSize)  
-    
-dat2analyze_subset <- dat2analyze %>% 
+dat2analyze$teamSize <- as.integer(dat2analyze$teamSize)
+
+dat2analyze_subset <- dat2analyze %>%
   filter(teamSize > 1) %>%
   group_by(team) %>%
   mutate(same = n_distinct(country)) %>%
@@ -69,17 +69,17 @@ sum(dat2analyze_final$same > 1)
 data$country <- as.factor(data$country)
 
 #Extract # of teams for the different countries
-df_frq <- data %>% 
-  select(country) %>% 
-  mutate(country = 
+df_frq <- data %>%
+  select(country) %>%
+  mutate(country =
            case_when(country =="Korea" | country =="Republic of Korea" ~"South Korea",
                      country == "UAE"~"United Arab Emirates",
                      country == "USA" ~ "United States",
-                     TRUE ~ as.character(country))) %>% 
-  group_by(country) %>%   
-  mutate(value1=n()) %>% 
-  arrange(value1) %>% 
-  select(value1,country) %>% 
+                     TRUE ~ as.character(country))) %>%
+  group_by(country) %>%
+  mutate(value1=n()) %>%
+  arrange(value1) %>%
+  select(value1,country) %>%
   ungroup()
 
 df_frq$value1 <- as.numeric(df_frq$value1)
@@ -108,21 +108,21 @@ df_country$value_recoded <- as.factor(df_country$value_recoded)
 ################################################################################
 #Plot
 
-#Joining the data with a map 
+#Joining the data with a map
 df_country_map <- joinCountryData2Map(df_country, joinCode="NAME", nameJoinColumn="country", verbose=TRUE)
 
-#Remove Antarctica from the world map 
+#Remove Antarctica from the world map
 df_country_new <- subset(df_country_map, continent != "Antarctica")
 
 #Create colormap
 YYPalette <- c('#D2E3E1', '#C3D9D7', '#B4D0CE', '#A5C7C4', '#96BDBA', '#87B4B0', '#78AAA6', '#69A19C')
 
-#Create a map 
-mapParams <- mapCountryData(df_country_new, 
-                            nameColumnToPlot = "value_recoded",  
+#Create a map
+mapParams <- mapCountryData(df_country_new,
+                            nameColumnToPlot = "value_recoded",
                             catMethod = 'categorical',
                             missingCountryCol = 'darkgray',#gray(.98), #"white"
-                            addLegend = F, 
+                            addLegend = F,
                             lwd = .8,
                             borderCol = 'white',
                             colourPalette= YYPalette)
@@ -130,7 +130,7 @@ mapParams <- mapCountryData(df_country_new,
 do.call(addMapLegendBoxes, c(mapParams,
                              x='bottom',
                              horiz=T,
-                             bg='transparent', 
+                             bg='transparent',
                              bty='n'))
 
 ################################################################################
@@ -141,4 +141,3 @@ emp_continent <- countrycode(sourcevar = analyst_countries, origin = "country.na
 n_analysts <- length(emp_continent)
 freqTable <- table(emp_continent) / n_analysts
 freqTable <- freqTable * 100
-
