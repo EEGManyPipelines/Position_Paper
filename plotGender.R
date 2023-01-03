@@ -19,7 +19,7 @@ if ( Sys.getenv("USER") == 'mcvinding' ){
 } else if (Sys.getenv("USERNAME") == 'Mikkel'){
   data.path <- 'C:/Users/Mikkel/Documents/EEGManyPipelines/metadata_summary'
 } else if (Sys.getenv("USER") == 'darinka'){
-  data.path <- '/home/darinka/Documents/EEGManyPipes/metadata_summary/data'
+  data.path <- '/home/darinka/Documents/EEGManyPipes/Position_Paper/data'
 } else if (Sys.getenv("USERNAME") == 'darinka.truebutschek'){
   data.path <- 'C:/Users/darinka.truebutschek/Documents/EEGManyPipelines/metadata_summary/data'
 } else {
@@ -45,7 +45,14 @@ n_teams = length(unique(data$team))
 teams <- data$team
 team_sizes <- ones(length(teams), 1)
 
-for (value in seq(n_teams)) {
+#for (value in seq(n_teams)) {
+  #print(value)
+
+  #teamSize <- sum(teams == value)
+  #team_sizes[teams == value] <- teamSize
+#}
+
+for (value in teams) {
   print(value)
 
   teamSize <- sum(teams == value)
@@ -67,7 +74,7 @@ genderXteam <- table(data$gender_recoded, by=data$teamSize)
 #Prepare data for plotting
 df_teamsize<-data.frame()
 df_teamsize[1:3,1]<-c(1,2,3)
-df_teamsize[1:3,2]<-c(30, 94, 273)
+df_teamsize[1:3,2]<-c(30, 96, 270)
 colnames(df_teamsize)<-c("teamSize","vector_teamSizes")
 
 dat2plot <- data %>%
